@@ -94,11 +94,16 @@ export function useAuth() {
     [state.session],
   );
 
+  const signInWithGoogle = useCallback(async () => {
+    await authService.signInWithGoogle();
+  }, []);
+
   return {
     ...state,
     isAuthenticated: Boolean(state.session),
     requiresLoginId: Boolean(state.session && !state.user?.login_id),
     refresh,
+    signInWithGoogle,
     setLoginId,
   };
 }

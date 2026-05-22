@@ -90,7 +90,7 @@ POST /api/v1/auth/oauth
 
 ---
 
-## 2.2 내 정보 조회
+# 2.2 내 정보 조회
 
 ```http
 GET /api/v1/users/me
@@ -103,7 +103,7 @@ GET /api/v1/users/me
   "success": true,
   "data": {
     "user_id": "uuid",
-    "login_id": "runner2026",
+    "login_id": null,
     "email": "user@test.com",
     "nickname": "러너",
     "profile_image_url": null
@@ -112,9 +112,16 @@ GET /api/v1/users/me
 }
 ```
 
+### Policy
+
+- OAuth 최초 로그인 직후에는 `login_id`가 없을 수 있다.
+- 이 경우 `login_id = null`로 반환한다.
+- `login_id` 설정 완료 이후에는 null이 될 수 없다.
+- `login_id`는 최초 설정 이후 변경할 수 없다.
+
 ---
 
-## 2.3 login_id 설정
+# 2.3 login_id 설정
 
 OAuth 최초 로그인 후 `login_id`가 없을 경우 사용한다.
 
@@ -152,45 +159,25 @@ POST /api/v1/users/me/login-id
 
 - 중복 불가
 - 최초 설정 후 변경 불가
-- 허용 문자: 영문 소문자, 숫자, `_`
+- OAuth 최초 로그인 사용자만 가능
+- 허용 문자: 영문 소문자, 숫자, "_"
+```
 
 ---
 
-# 3. Activity API
-
-## 3.1 활동 시작
-
-```http
-POST /api/v1/activities/start
-```
-
-### Request
-
-```json
-{
-  "activity_type": "RUN"
-}
-```
-
-### Response
-
-```json
-{
-  "success": true,
-  "data": {
-    "activity_id": 1,
-    "activity_type": "RUN",
-    "status": "STARTED",
-    "started_at": "2026-05-19T10:00:00Z"
-  },
-  "message": null
-}
-```
+# 3.1 활동 시작
 
 ### activity_type
 
+현재 MVP:
+
 ```text
 RUN
+```
+
+향후:
+
+```text
 RIDE
 HIKE
 ```

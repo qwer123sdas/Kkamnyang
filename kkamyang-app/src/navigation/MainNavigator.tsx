@@ -11,9 +11,9 @@ import RouteHistoryScreen from "../screens/route/RouteHistoryScreen";
 
 export type MainStackParamList = {
   RouteFeed: undefined;
-  RouteDetail: undefined;
-  RouteCluster: undefined;
-  RouteHistory: undefined;
+  RouteDetail: { routeId?: number } | undefined;
+  RouteCluster: { routeId: number };
+  RouteHistory: { routeId: number };
   MyRoutes: undefined;
   Record: undefined;
   Bookmark: undefined;

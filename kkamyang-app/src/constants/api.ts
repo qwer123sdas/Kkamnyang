@@ -1,1 +1,12 @@
 export const API_BASE_PATH = "/api/v1";
+
+export const API_ERROR_CODES = {
+  AUTH_REQUIRED: "AUTH_REQUIRED",
+  INVALID_TOKEN: "INVALID_TOKEN",
+  FORBIDDEN: "FORBIDDEN",
+  NOT_FOUND: "NOT_FOUND",
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  INTERNAL_ERROR: "INTERNAL_ERROR",
+} as const;
+
+export type ApiErrorCode = (typeof API_ERROR_CODES)[keyof typeof API_ERROR_CODES];

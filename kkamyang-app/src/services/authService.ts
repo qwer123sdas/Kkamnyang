@@ -15,6 +15,25 @@ function getSupabase() {
   return supabase;
 }
 
+function getCodeFromUrl(url: string) {
+  const parsedUrl = Linking.parse(url);
+  const code = parsedUrl.queryParams?.code;
+
+  return Array.isArray(code) ? code[0] : code;
+}
+
+const oauthCallbackListeners = new Set<() => void>();
+const exchangedOAuthCodes = new Set<string>();
+let oauthCallbackSubscription: { remove: () => void } | null = null;
+let hasCheckedInitialOAuthUrl = false;
+let processingOAuthCode: string | null = null;
+
+function emitOAuthCallback() {
+  oauthCallbackListeners.forEach((listener) => {
+    listener();
+  });
+}
+
 export const authService = {
   async getSession() {
     if (!supabase) {
@@ -44,19 +63,118 @@ export const authService = {
     return data.subscription;
   },
 
+  onOAuthCallback(callback: () => void) {
+    if (!supabase) {
+      return {
+        unsubscribe() {},
+      };
+    }
+
+    oauthCallbackListeners.add(callback);
+
+    const handleUrl = async (url: string | null) => {
+      if (!url || !url.includes("auth/callback")) {
+        return;
+      }
+
+      console.log("[Auth] callback received");
+
+      try {
+        const client = getSupabase();
+        const code = getCodeFromUrl(url);
+
+        console.log("[Auth] code exists", Boolean(code));
+
+        if (!code) {
+          return;
+        }
+
+        if (processingOAuthCode === code || exchangedOAuthCodes.has(code)) {
+          console.log("[Auth] callback skipped duplicate");
+          return;
+        }
+
+        processingOAuthCode = code;
+
+        const { error } = await client.auth.exchangeCodeForSession(code);
+
+        if (error) {
+          console.log("[Auth] error", error.message);
+          throw error;
+        }
+
+        exchangedOAuthCodes.add(code);
+
+        const { data, error: sessionError } = await client.auth.getSession();
+
+        if (sessionError) {
+          console.log("[Auth] error", sessionError.message);
+          throw sessionError;
+        }
+
+        console.log("[Auth] session exists", Boolean(data.session));
+        console.log("[Auth] user exists", Boolean(data.session?.user));
+
+        emitOAuthCallback();
+      } catch (error) {
+        console.log(
+          "[Auth] error",
+          error instanceof Error ? error.message : "AUTH_CALLBACK_ERROR",
+        );
+      } finally {
+        processingOAuthCode = null;
+      }
+    };
+
+    if (!oauthCallbackSubscription) {
+      oauthCallbackSubscription = Linking.addEventListener("url", ({ url }) => {
+        void handleUrl(url);
+      });
+    }
+
+    if (!hasCheckedInitialOAuthUrl) {
+      hasCheckedInitialOAuthUrl = true;
+      void Linking.getInitialURL().then(handleUrl).catch((error: unknown) => {
+        console.log(
+          "[Auth] error",
+          error instanceof Error ? error.message : "AUTH_INITIAL_URL_ERROR",
+        );
+      });
+    }
+
+    return {
+      unsubscribe() {
+        oauthCallbackListeners.delete(callback);
+
+        if (oauthCallbackListeners.size === 0) {
+          oauthCallbackSubscription?.remove();
+          oauthCallbackSubscription = null;
+        }
+      },
+    };
+  },
+
   async signInWithGoogle() {
     const client = getSupabase();
+    const redirectTo = Linking.createURL("auth/callback");
+
+    console.log("[Auth] login start");
+    console.log("[Auth] redirectTo", redirectTo);
+
     const { data, error } = await client.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: Linking.createURL("auth/callback"),
+        redirectTo,
         skipBrowserRedirect: true,
       },
     });
 
     if (error) {
+      console.log("[Auth] signInWithOAuth error", error.message);
       throw error;
     }
+
+    console.log("[Auth] oauth url exists", Boolean(data.url));
 
     if (data.url) {
       await Linking.openURL(data.url);
@@ -64,7 +182,20 @@ export const authService = {
   },
 
   async getCurrentUser(accessToken: string): Promise<User> {
-    return userService.getMe(accessToken);
+    try {
+      const user = await userService.getMe(accessToken);
+
+      console.log("[Auth] profile exists", Boolean(user));
+      console.log("[Auth] login_id", user.login_id ? "not-null" : "null");
+
+      return user;
+    } catch (error) {
+      console.log(
+        "[Auth] error",
+        error instanceof Error ? error.message : "AUTH_PROFILE_ERROR",
+      );
+      throw error;
+    }
   },
 
   async setLoginId(accessToken: string, loginId: string) {

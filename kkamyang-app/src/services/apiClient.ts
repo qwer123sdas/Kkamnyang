@@ -45,6 +45,11 @@ type ApiRequest = {
 
 function createUrl(path: string) {
   const baseUrl = apiClient.baseUrl.replace(/\/$/, "");
+
+  if (!baseUrl) {
+    throw new Error("API_BASE_URL_NOT_CONFIGURED");
+  }
+
   return `${baseUrl}${apiClient.basePath}${path}`;
 }
 

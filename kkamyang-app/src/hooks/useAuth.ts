@@ -19,6 +19,7 @@ const authState: AuthState = {
 };
 
 const listeners = new Set<() => void>();
+let authLoadPromise: Promise<void> | null = null;
 
 function emitChange() {
   listeners.forEach((listener) => {
@@ -31,7 +32,7 @@ function setAuthState(nextState: Partial<AuthState>) {
   emitChange();
 }
 
-async function loadAuthState() {
+async function loadAuthStateInternal() {
   setAuthState({ isLoading: true, errorMessage: null });
 
   try {
@@ -42,8 +43,20 @@ async function loadAuthState() {
       return;
     }
 
-    const user = await authService.getCurrentUser(session.access_token);
-    setAuthState({ session, user, isLoading: false });
+    setAuthState({ session, user: null, isLoading: false });
+
+    try {
+      const user = await authService.getCurrentUser(session.access_token);
+      setAuthState({ session, user, isLoading: false });
+    } catch (error) {
+      setAuthState({
+        session,
+        user: null,
+        isLoading: false,
+        errorMessage:
+          error instanceof Error ? error.message : "AUTH_PROFILE_ERROR",
+      });
+    }
   } catch (error) {
     setAuthState({
       session: null,
@@ -52,6 +65,16 @@ async function loadAuthState() {
       errorMessage: error instanceof Error ? error.message : "AUTH_ERROR",
     });
   }
+}
+
+async function loadAuthState() {
+  if (!authLoadPromise) {
+    authLoadPromise = loadAuthStateInternal().finally(() => {
+      authLoadPromise = null;
+    });
+  }
+
+  await authLoadPromise;
 }
 
 export function useAuth() {
@@ -71,10 +94,14 @@ export function useAuth() {
     const subscription = authService.onAuthStateChange(() => {
       loadAuthState();
     });
+    const callbackSubscription = authService.onOAuthCallback(() => {
+      loadAuthState();
+    });
 
     return () => {
       listeners.delete(listener);
       subscription.unsubscribe();
+      callbackSubscription.unsubscribe();
     };
   }, []);
 

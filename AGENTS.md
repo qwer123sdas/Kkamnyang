@@ -193,6 +193,15 @@ Route Cluster 사용
 
 ---
 
+# 보안 정책
+
+- AI Agent는 Secret을 신뢰 경계 밖 데이터로 취급한다.
+- .env 실제 값 읽기/출력/요약 금지
+- 환경변수는 변수명/존재 여부만 확인
+- 로그에는 실제 값 대신 SET/NOT_SET만 출력
+- EXPO_PUBLIC_*도 실제 값 출력 금지
+---
+
 ## Allowed
 
 허용:

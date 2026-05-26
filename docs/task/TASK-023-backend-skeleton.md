@@ -55,6 +55,12 @@ Run:
 python -m uvicorn app.main:app --reload --app-dir backend
 ```
 
+Run for Android physical device QA:
+
+```bash
+python -m uvicorn app.main:app --reload --app-dir backend --host 0.0.0.0 --port 8000
+```
+
 Test:
 
 ```bash
@@ -68,4 +74,15 @@ GET /api/v1/health 응답 확인
 GET /api/v1/users/me Bearer 인증 확인
 GET /api/v1/users/me 공통 응답 형식 확인
 users 테이블 조회/생성은 서버 내부 service role key로만 수행
+Android 실기기 QA 시 0.0.0.0:8000 LISTENING 확인
+Android 실기기 브라우저에서 http://PC-IPv4:8000/api/v1/health success 확인
+```
+
+## Debug Notes
+
+```text
+Google OAuth 및 Supabase Session 생성은 성공 확인.
+Network request failed 원인:
+FastAPI가 127.0.0.1:8000 에만 바인딩되면 Android 실기기에서 접근할 수 없다.
+Android 실기기 QA에서는 --host 0.0.0.0 --port 8000 으로 실행한다.
 ```

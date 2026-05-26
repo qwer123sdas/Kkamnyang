@@ -37,14 +37,19 @@ function emitOAuthCallback() {
 export const authService = {
   async getSession() {
     if (!supabase) {
+      console.log("[Auth] getSession skipped supabase not configured");
       return null;
     }
 
     const { data, error } = await supabase.auth.getSession();
 
     if (error) {
+      console.log("[Auth] getSession error", error.message);
       throw error;
     }
+
+    console.log("[Auth] getSession session exists", Boolean(data.session));
+    console.log("[Auth] getSession user exists", Boolean(data.session?.user));
 
     return data.session;
   },
@@ -99,21 +104,25 @@ export const authService = {
         const { error } = await client.auth.exchangeCodeForSession(code);
 
         if (error) {
-          console.log("[Auth] error", error.message);
+          console.log("[Auth] exchangeCodeForSession error", error.message);
           throw error;
         }
+
+        console.log("[Auth] exchangeCodeForSession success");
 
         exchangedOAuthCodes.add(code);
 
         const { data, error: sessionError } = await client.auth.getSession();
 
         if (sessionError) {
-          console.log("[Auth] error", sessionError.message);
+          console.log("[Auth] callback getSession error", sessionError.message);
           throw sessionError;
         }
 
-        console.log("[Auth] session exists", Boolean(data.session));
-        console.log("[Auth] user exists", Boolean(data.session?.user));
+        console.log("[Auth] callback session exists", Boolean(data.session));
+        console.log("[Auth] callback access token exists", Boolean(data.session?.access_token));
+        console.log("[Auth] callback refresh token exists", Boolean(data.session?.refresh_token));
+        console.log("[Auth] callback user exists", Boolean(data.session?.user));
 
         emitOAuthCallback();
       } catch (error) {
@@ -160,6 +169,7 @@ export const authService = {
 
     console.log("[Auth] login start");
     console.log("[Auth] redirectTo", redirectTo);
+    console.log("[Auth] supabase configured", Boolean(supabase));
 
     const { data, error } = await client.auth.signInWithOAuth({
       provider: "google",
@@ -174,7 +184,8 @@ export const authService = {
       throw error;
     }
 
-    console.log("[Auth] oauth url exists", Boolean(data.url));
+    console.log("[Auth] signInWithOAuth result url exists", Boolean(data.url));
+    console.log("[Auth] signInWithOAuth result provider", data.provider ?? "unknown");
 
     if (data.url) {
       await Linking.openURL(data.url);
@@ -183,10 +194,13 @@ export const authService = {
 
   async getCurrentUser(accessToken: string): Promise<User> {
     try {
+      console.log("[Auth] users/me request start");
+      console.log("[Auth] users/me access token exists", Boolean(accessToken));
+
       const user = await userService.getMe(accessToken);
 
-      console.log("[Auth] profile exists", Boolean(user));
-      console.log("[Auth] login_id", user.login_id ? "not-null" : "null");
+      console.log("[Auth] users/me response user exists", Boolean(user));
+      console.log("[Auth] users/me response login_id", user.login_id ? "not-null" : "null");
 
       return user;
     } catch (error) {

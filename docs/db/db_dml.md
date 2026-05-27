@@ -14,7 +14,7 @@ USERS
 ==========================================
 */
 
-CREATE TABLE users (
+CREATE TABLE public.users (
 
     user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 

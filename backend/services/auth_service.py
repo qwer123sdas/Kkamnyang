@@ -14,6 +14,7 @@ class AuthUser:
     email: str | None
     nickname: str | None
     profile_image_url: str | None
+    auth_provider: str
 
 
 class AuthService:
@@ -53,12 +54,26 @@ class AuthService:
         if not isinstance(metadata, dict):
             metadata = {}
 
+        app_metadata = payload.get("app_metadata")
+        if not isinstance(app_metadata, dict):
+            app_metadata = {}
+
         nickname = metadata.get("name") or metadata.get("full_name") or metadata.get("nickname")
         avatar_url = metadata.get("avatar_url") or metadata.get("picture")
+        provider = app_metadata.get("provider")
+        auth_provider = {
+            "google": "GOOGLE",
+            "naver": "NAVER",
+            "email": "LOCAL",
+        }.get(provider)
+
+        if not auth_provider:
+            raise ApiError(401, "Unsupported auth provider", "INVALID_TOKEN")
 
         return AuthUser(
             user_id=user_id,
             email=payload.get("email") if isinstance(payload.get("email"), str) else None,
             nickname=nickname if isinstance(nickname, str) else None,
             profile_image_url=avatar_url if isinstance(avatar_url, str) else None,
+            auth_provider=auth_provider,
         )

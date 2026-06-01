@@ -3,6 +3,7 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+from uuid import UUID
 
 from app.config import Settings
 from services.auth_service import AuthUser
@@ -33,17 +34,19 @@ class UserRepository:
         return payload[0] if payload else None
 
     def create_from_auth_user(self, auth_user: AuthUser) -> dict[str, Any]:
+        login_id = f"social_{UUID(auth_user.user_id).hex[:23]}"
         payload = self._request(
             method="POST",
             path="/rest/v1/users",
             body={
                 "user_id": auth_user.user_id,
-                "login_id": None,
+                "auth_provider": auth_user.auth_provider,
+                "login_id": login_id,
                 "email": auth_user.email,
                 "nickname": auth_user.nickname,
                 "profile_image_url": auth_user.profile_image_url,
-                "created_by": None,
-                "updated_by": None,
+                "created_by": login_id,
+                "updated_by": login_id,
                 "deleted_yn": "N",
             },
             extra_headers={"Prefer": "return=representation"},

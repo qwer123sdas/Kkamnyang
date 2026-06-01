@@ -10,6 +10,53 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 /*
 ==========================================
+LOGIN_PROVIDER
+==========================================
+*/
+
+CREATE TABLE public.login_provider (
+
+    provider_code VARCHAR(20) PRIMARY KEY,
+
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_by VARCHAR(50) NOT NULL,
+
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_by VARCHAR(50) NOT NULL
+
+);
+
+
+COMMENT ON TABLE login_provider IS '로그인 제공자 관리 테이블';
+
+COMMENT ON COLUMN login_provider.provider_code IS '로그인 제공자 코드';
+COMMENT ON COLUMN login_provider.is_active IS '사용 여부';
+COMMENT ON COLUMN login_provider.sort_order IS '정렬 순서';
+COMMENT ON COLUMN login_provider.created_at IS '생성일';
+COMMENT ON COLUMN login_provider.created_by IS '생성자 login_id 또는 시스템 actor';
+COMMENT ON COLUMN login_provider.updated_at IS '수정일';
+COMMENT ON COLUMN login_provider.updated_by IS '수정자 login_id 또는 시스템 actor';
+
+
+INSERT INTO public.login_provider (
+    provider_code,
+    created_by,
+    updated_by
+)
+VALUES
+    ('GOOGLE', 'SYSTEM', 'SYSTEM'),
+    ('NAVER', 'SYSTEM', 'SYSTEM'),
+    ('LOCAL', 'SYSTEM', 'SYSTEM');
+
+
+
+
+
+/*
+==========================================
 USERS
 ==========================================
 */
@@ -22,17 +69,17 @@ CREATE TABLE public.users (
     email VARCHAR(100) UNIQUE,
     password_hash VARCHAR(255),
 
-    provider VARCHAR(20),
+    auth_provider VARCHAR(20) NOT NULL,
     provider_user_id VARCHAR(100),
 
     nickname VARCHAR(50) NOT NULL,
     profile_image_url TEXT,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    created_by VARCHAR(30) NOT NULL,
+    created_by VARCHAR(50) NOT NULL,
 
     updated_at TIMESTAMPTZ,
-    updated_by VARCHAR(30),
+    updated_by VARCHAR(50),
 
     deleted_yn CHAR(1) NOT NULL DEFAULT 'N',
     deleted_at TIMESTAMPTZ,
@@ -45,7 +92,11 @@ CREATE TABLE public.users (
     CONSTRAINT chk_users_deleted_yn
     CHECK (
         deleted_yn IN ('Y','N')
-    )
+    ),
+
+    CONSTRAINT fk_users_login_provider
+    FOREIGN KEY(auth_provider)
+    REFERENCES login_provider(provider_code)
 );
 
 
@@ -55,7 +106,7 @@ COMMENT ON COLUMN users.user_id IS '사용자 PK';
 COMMENT ON COLUMN users.login_id IS '로그인 ID';
 COMMENT ON COLUMN users.email IS '이메일';
 COMMENT ON COLUMN users.password_hash IS '암호화 비밀번호';
-COMMENT ON COLUMN users.provider IS 'OAuth 제공자';
+COMMENT ON COLUMN users.auth_provider IS '로그인 제공자 코드';
 COMMENT ON COLUMN users.provider_user_id IS 'OAuth 사용자 ID';
 COMMENT ON COLUMN users.nickname IS '닉네임';
 COMMENT ON COLUMN users.profile_image_url IS '프로필 이미지';
@@ -68,7 +119,7 @@ COMMENT ON COLUMN users.deleted_at IS '삭제일';
 
 
 CREATE INDEX ix_users_provider
-ON users(provider, provider_user_id);
+ON users(auth_provider, provider_user_id);
 
 
 
@@ -113,10 +164,10 @@ CREATE TABLE routes (
     bookmark_count INTEGER DEFAULT 0,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    created_by VARCHAR(30) NOT NULL,
+    created_by VARCHAR(50) NOT NULL,
 
     updated_at TIMESTAMPTZ,
-    updated_by VARCHAR(30),
+    updated_by VARCHAR(50),
 
     deleted_yn CHAR(1)
     DEFAULT 'N',
@@ -129,7 +180,7 @@ CREATE TABLE routes (
 
     CONSTRAINT chk_routes_activity_type
     CHECK (
-a       ctivity_type='RUN'
+        activity_type='RUN'
     ),
 
     CONSTRAINT chk_routes_visibility
@@ -144,15 +195,6 @@ a       ctivity_type='RUN'
     )
 
 );
-
-ALTER TABLE routes
-ADD COLUMN route_cluster_id BIGINT;
-
-ALTER TABLE routes
-ADD CONSTRAINT fk_route_cluster
-FOREIGN KEY(route_cluster_id)
-REFERENCES route_clusters(route_cluster_id);
-
 
 COMMENT ON TABLE routes IS '운동 경로';
 
@@ -220,12 +262,12 @@ CREATE TABLE route_clusters (
     NOT NULL
     DEFAULT now(),
 
-    created_by VARCHAR(30)
+    created_by VARCHAR(50)
     NOT NULL,
 
     updated_at TIMESTAMPTZ,
 
-    updated_by VARCHAR(30),
+    updated_by VARCHAR(50),
 
     deleted_yn CHAR(1)
     DEFAULT 'N',
@@ -241,6 +283,15 @@ CREATE TABLE route_clusters (
 
 
 COMMENT ON TABLE route_clusters IS '유사 경로 그룹';
+
+
+ALTER TABLE routes
+ADD COLUMN route_cluster_id BIGINT;
+
+ALTER TABLE routes
+ADD CONSTRAINT fk_route_cluster
+FOREIGN KEY(route_cluster_id)
+REFERENCES route_clusters(route_cluster_id);
 
 
 
@@ -273,10 +324,10 @@ CREATE TABLE activities (
     DEFAULT 'STARTED',
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    created_by VARCHAR(30) NOT NULL,
+    created_by VARCHAR(50) NOT NULL,
 
     updated_at TIMESTAMPTZ,
-    updated_by VARCHAR(30),
+    updated_by VARCHAR(50),
 
     deleted_yn CHAR(1)
     DEFAULT 'N',
@@ -344,10 +395,10 @@ CREATE TABLE route_likes (
     user_id UUID NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    created_by VARCHAR(30) NOT NULL,
+    created_by VARCHAR(50) NOT NULL,
 
     updated_at TIMESTAMPTZ,
-    updated_by VARCHAR(30),
+    updated_by VARCHAR(50),
 
     deleted_yn CHAR(1)
     DEFAULT 'N',
@@ -392,10 +443,10 @@ CREATE TABLE route_comments (
     content TEXT NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    created_by VARCHAR(30) NOT NULL,
+    created_by VARCHAR(50) NOT NULL,
 
     updated_at TIMESTAMPTZ,
-    updated_by VARCHAR(30),
+    updated_by VARCHAR(50),
 
     deleted_yn CHAR(1)
     DEFAULT 'N',
@@ -435,10 +486,10 @@ CREATE TABLE route_bookmarks (
     user_id UUID NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    created_by VARCHAR(30) NOT NULL,
+    created_by VARCHAR(50) NOT NULL,
 
     updated_at TIMESTAMPTZ,
-    updated_by VARCHAR(30),
+    updated_by VARCHAR(50),
 
     deleted_yn CHAR(1)
     DEFAULT 'N',

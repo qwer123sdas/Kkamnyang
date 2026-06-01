@@ -23,6 +23,7 @@ def override_current_auth_user():
         email="user@test.com",
         nickname="Runner",
         profile_image_url=None,
+        auth_provider="GOOGLE",
     )
 
 

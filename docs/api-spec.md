@@ -71,7 +71,7 @@ POST /api/v1/auth/oauth
     "access_token": "jwt-token",
     "user": {
       "user_id": "uuid",
-      "login_id": "runner2026",
+      "login_id": "social_a1b2c3d4e5f678901234567",
       "email": "user@test.com",
       "nickname": "러너"
     }
@@ -86,7 +86,9 @@ POST /api/v1/auth/oauth
 - 최초 OAuth 로그인 시 `users` 테이블에 사용자를 생성한다.
 - 기존 사용자는 로그인 처리한다.
 - 향후 일반 회원가입을 추가할 수 있도록 `password_hash` 컬럼은 유지한다.
-- `login_id`는 최초 설정 후 변경할 수 없다.
+- 소셜 회원의 `login_id`는 `social_` + Supabase Auth UUID hex 앞 23자리로 서버가 자동 생성한다.
+- 소셜 회원의 이메일은 `email` 컬럼에만 저장하며 `login_id` 또는 audit 컬럼에 사용하지 않는다.
+- `created_by`, `updated_by`에는 자동 생성된 소셜 `login_id`를 저장한다.
 
 ---
 
@@ -103,7 +105,7 @@ GET /api/v1/users/me
   "success": true,
   "data": {
     "user_id": "uuid",
-    "login_id": null,
+    "login_id": "social_a1b2c3d4e5f678901234567",
     "email": "user@test.com",
     "nickname": "러너",
     "profile_image_url": null
@@ -114,16 +116,14 @@ GET /api/v1/users/me
 
 ### Policy
 
-- OAuth 최초 로그인 직후에는 `login_id`가 없을 수 있다.
-- 이 경우 `login_id = null`로 반환한다.
-- `login_id` 설정 완료 이후에는 null이 될 수 없다.
-- `login_id`는 최초 설정 이후 변경할 수 없다.
+- 소셜 회원은 최초 로그인 시 서버가 생성한 `login_id`를 반환한다.
+- 일반 회원은 향후 회원가입 흐름에서 사용자가 `login_id`를 설정한다.
 
 ---
 
-# 2.3 login_id 설정
+# 2.3 일반 회원 login_id 설정
 
-OAuth 최초 로그인 후 `login_id`가 없을 경우 사용한다.
+향후 일반 회원가입에서 `login_id`를 최초 설정할 경우 사용한다.
 
 ```http
 POST /api/v1/users/me/login-id
@@ -159,7 +159,7 @@ POST /api/v1/users/me/login-id
 
 - 중복 불가
 - 최초 설정 후 변경 불가
-- OAuth 최초 로그인 사용자만 가능
+- 일반 회원만 가능
 - 허용 문자: 영문 소문자, 숫자, "_"
 ```
 

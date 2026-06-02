@@ -1,8 +1,10 @@
 from fastapi import Header
 
 from app.config import get_settings
+from repositories.route_repository import RouteRepository
 from repositories.user_repository import UserRepository
 from services.auth_service import AuthService
+from services.route_service import RouteService
 from services.user_service import UserService
 from utils.response import ApiError
 
@@ -33,3 +35,8 @@ def get_current_auth_user(
 def get_user_service() -> UserService:
     settings = get_settings()
     return UserService(UserRepository(settings))
+
+
+def get_route_service() -> RouteService:
+    settings = get_settings()
+    return RouteService(RouteRepository(settings))

@@ -131,6 +131,17 @@ ON users(auth_provider, provider_user_id);
 ROUTES
 ==========================================
 */
+/*
+  ## PostGIS geography 타입 참고
+  ### extensions.geography란?
+  `geography`는 PostgreSQL 기본 타입이 아니다. PostGIS extension이 제공하는 공간 데이터 타입이다. Supabase에서 PostGIS를 `extensions` 스키마에 설치한 경우 다음과 같이 스키마를 명시한다.  
+
+  ### RouteLog에서 필요한 이유
+  RouteLog는 GPS 기반 운동 기록 플랫폼이다. Route의 시작점과 종료점을 좌표로 저장해야 한다. geography 타입은 지구 곡률을 고려하여 위치 간 거리를 미터 단위로 계산할 수 있다. 따라서 단순 문자열 또는 위도·경도 숫자 컬럼보다 반경 검색에 적합하다.
+*/
+create schema if not exists extensions;
+create extension if not exists postgis
+with schema extensions;
 
 CREATE TABLE routes (
 
@@ -151,17 +162,16 @@ CREATE TABLE routes (
 
     route_geojson JSONB,
 
-    start_point GEOGRAPHY(Point,4326),
-
-    end_point GEOGRAPHY(Point,4326),
+    start_point extensions.geography(POINT, 4326),
+    end_point extensions.geography(POINT, 4326),
 
     distance_km NUMERIC(8,3),
 
     duration_sec INTEGER,
 
-    like_count INTEGER DEFAULT 0,
-    comment_count INTEGER DEFAULT 0,
-    bookmark_count INTEGER DEFAULT 0,
+    like_count INTEGER NOT NULL DEFAULT 0,
+    comment_count INTEGER NOT NULL DEFAULT 0,
+    bookmark_count INTEGER NOT NULL DEFAULT 0,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     created_by VARCHAR(50) NOT NULL,
@@ -169,8 +179,7 @@ CREATE TABLE routes (
     updated_at TIMESTAMPTZ,
     updated_by VARCHAR(50),
 
-    deleted_yn CHAR(1)
-    DEFAULT 'N',
+    deleted_yn CHAR(1) NOT NULL DEFAULT 'N',
 
     deleted_at TIMESTAMPTZ,
 

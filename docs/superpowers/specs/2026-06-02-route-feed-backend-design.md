@@ -1,36 +1,36 @@
-# Route Feed Backend Design
+# Route Feed 백엔드 설계
 
-## Goal
+## 목표
 
-Implement the public Route Feed backend endpoint required by `TASK-009-route-feed.md`.
+`TASK-009-route-feed.md`에서 요구하는 공개 Route Feed 백엔드 엔드포인트를 구현한다.
 
 ```http
 GET /api/v1/routes/feed?page=1&size=20&activity_type=RUN
 ```
 
-## Scope
+## 범위
 
-- Add a public FastAPI endpoint with no authentication dependency.
-- Support only `activity_type=RUN`.
-- Require `page >= 1` and `1 <= size <= 50`.
-- Return only public, non-deleted routes written by non-deleted users.
-- Sort by route creation time descending.
-- Preserve the response structure defined in `docs/api-spec.md`.
-- Keep the existing `api -> service -> repository -> Supabase PostgREST` structure.
+- 인증 의존성이 없는 공개 FastAPI 엔드포인트를 추가한다.
+- `activity_type=RUN`만 지원한다.
+- `page >= 1`, `1 <= size <= 50` 조건을 적용한다.
+- 삭제되지 않은 사용자가 작성한 공개 상태의 미삭제 Route만 반환한다.
+- Route 생성일시 기준 내림차순으로 정렬한다.
+- `docs/api-spec.md`에 정의된 응답 구조를 유지한다.
+- 기존 `api -> service -> repository -> Supabase PostgREST` 구조를 유지한다.
 
-## Out Of Scope
+## 제외 범위
 
-- Personalized like or bookmark state
-- Route detail
-- Route cluster
-- Nearby route
-- Like, comment, or bookmark mutation
-- Database schema changes
-- Frontend changes
+- 사용자별 좋아요 또는 북마크 상태
+- Route 상세
+- Route Cluster
+- 주변 Route
+- 좋아요, 댓글 또는 북마크 변경
+- 데이터베이스 스키마 변경
+- 프론트엔드 변경
 
-## Architecture
+## 아키텍처
 
-Add three backend modules:
+백엔드 모듈 세 개를 추가한다.
 
 ```text
 backend/api/route_api.py
@@ -38,15 +38,15 @@ backend/services/route_service.py
 backend/repositories/route_repository.py
 ```
 
-Register the Route router in `backend/app/main.py`. Add a dependency provider in
-`backend/app/dependencies.py` following the existing `UserService` pattern.
+`backend/app/main.py`에 Route router를 등록한다. 기존 `UserService` 패턴을 따라
+`backend/app/dependencies.py`에 의존성 provider를 추가한다.
 
-## Data Query
+## 데이터 조회
 
-Use one Supabase PostgREST request with an embedded `users` select based on the
-existing `routes.user_id -> users.user_id` foreign key.
+기존 `routes.user_id -> users.user_id` 외래 키를 기반으로 `users` embedded select를
+포함한 Supabase PostgREST 요청을 한 번 사용한다.
 
-Apply these filters:
+다음 필터를 적용한다.
 
 ```text
 routes.visibility = PUBLIC
@@ -55,7 +55,7 @@ routes.activity_type = RUN
 users.deleted_yn = N
 ```
 
-Apply these query options:
+다음 조회 옵션을 적용한다.
 
 ```text
 order = created_at.desc
@@ -63,12 +63,11 @@ offset = (page - 1) * size
 limit = size + 1
 ```
 
-Requesting one additional row allows the service to calculate `has_next`
-without a separate count query.
+한 건을 추가로 요청하여 별도의 count 조회 없이 service에서 `has_next`를 계산한다.
 
-## Response
+## 응답
 
-Return:
+다음 구조로 반환한다.
 
 ```json
 {
@@ -83,7 +82,7 @@ Return:
 }
 ```
 
-Each item contains:
+각 item은 다음 필드를 포함한다.
 
 ```text
 route_id
@@ -103,21 +102,19 @@ user.login_id
 user.nickname
 ```
 
-## Error Handling
+## 오류 처리
 
-- Invalid `page`, `size`, or unsupported `activity_type` returns FastAPI query
-  validation status `422`.
-- Supabase configuration, network, HTTP, or malformed payload failures return
-  the existing `500 INTERNAL_ERROR` response through `ApiError`.
+- 잘못된 `page`, `size` 또는 지원하지 않는 `activity_type`은 FastAPI query
+  validation 상태 코드 `422`를 반환한다.
+- Supabase 설정, 네트워크, HTTP 또는 잘못된 payload 오류는 `ApiError`를 통해
+  기존 `500 INTERNAL_ERROR` 응답을 반환한다.
 
-## Testing
+## 테스트
 
-Add tests for:
+다음 테스트를 추가한다.
 
-- Public access without an Authorization header
-- Response structure and `has_next` calculation
-- Empty result behavior
-- Query validation for invalid `page`, `size`, and `activity_type`
-- Repository query filters, embedded user selection, ordering, offset, and
-  `size + 1` limit
-
+- Authorization 헤더가 없는 공개 접근
+- 응답 구조 및 `has_next` 계산
+- 조회 결과가 없는 경우의 동작
+- 잘못된 `page`, `size`, `activity_type`의 query validation
+- Repository 조회 필터, embedded user 선택, 정렬, offset 및 `size + 1` limit

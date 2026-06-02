@@ -1,237 +1,201 @@
 # KKamyang HANDOFF
 
-## 프로젝트 상태
+## 현재 상태
 
-- MVP 안정화 및 QA 진행 중
-- Android 실기기 기준 Google OAuth 및 `GET /api/v1/users/me` 연결 검증 완료
-- 다음 우선순위: Supabase 저장 결과 확인, `GET /api/v1/routes/feed` 백엔드 구현
+- MVP 안정화 및 Android 실기기 QA 진행 중
+- Google OAuth 및 `GET /api/v1/users/me` 연결 정상
+- 공개 RUN Route Feed 백엔드 구현 완료
+- Supabase `public.routes` 생성 후 Feed API `200 OK` 확인
+- 다음 우선순위: Feed 데이터 렌더링 QA, 변경사항 전체 검증 및 커밋, `TASK-010-route-detail`
 
 ---
 
-## 완료 내용
+## 이번 작업 결과
 
-### 1. 소셜 회원 식별자 정책
+### 1. 공개 Route Feed 백엔드
+
+구현:
 
 ```text
-소셜 회원:
-- user_id = Supabase Auth UUID
-- auth_provider = GOOGLE 또는 NAVER
-- login_id = social_ + Supabase Auth UUID hex 앞 23자리
-- email = 소셜 이메일
-- created_by = login_id
-- updated_by = login_id
-
-일반 회원:
-- auth_provider = LOCAL
-- login_id = 사용자가 ^[a-z0-9_]{4,30}$ 규칙에 맞춰 설정
-
-공통 audit:
-- 초기 시스템 데이터 = SYSTEM
-- 회원 생성 및 사용자 작업 = login_id
-- 이메일 또는 사람 이름은 audit actor로 저장하지 않음
+GET /api/v1/routes/feed?page=1&size=20&activity_type=RUN
 ```
 
-### 2. 로그인 제공자 관리 정책
-
-`auth_provider` CHECK 제약조건 대신 참조 테이블 FK 방식을 사용한다.
+정책:
 
 ```text
-login_provider:
-- provider_code varchar(20) PK
-- is_active boolean
-- sort_order integer
-- created_at timestamptz
-- created_by varchar(50)
-- updated_at timestamptz
-- updated_by varchar(50)
-
-초기 데이터:
-- GOOGLE
-- NAVER
-- LOCAL
-
-FK:
-- fk_users_login_provider
-- users.auth_provider → login_provider.provider_code
+- 공개 API: Authorization 헤더 없이 호출 가능
+- activity_type = RUN only
+- page >= 1
+- 1 <= size <= 50
+- visibility = PUBLIC
+- routes.deleted_yn = N
+- 작성자 users.deleted_yn = N
+- created_at 기준 최신순
+- size + 1 조회 후 has_next 계산
+- distance_km은 JSON number로 정규화
 ```
 
-신규 DB 전체 DDL:
+구현 파일:
 
 ```text
-docs/db/db_dml.md
+backend/api/route_api.py
+backend/services/route_service.py
+backend/repositories/route_repository.py
+backend/app/dependencies.py
+backend/app/main.py
+backend/tests/test_route_feed.py
+backend/tests/test_route_repository.py
 ```
 
-기존 DB migration:
+### 2. Supabase routes 테이블 확인
+
+초기 오류:
 
 ```text
-docs/task/TASK-024-social-user-identity-stabilization.md
+Supabase routes request failed status=404 postgrest_code=PGRST205
 ```
 
-### 3. 백엔드 구현
-
-완료:
+원인:
 
 ```text
-GET /api/v1/health
-GET /api/v1/users/me
-Supabase Auth access_token 검증
-public.users 조회 및 신규 소셜 회원 생성
-auth_provider 파싱
-social_ login_id 자동 생성
-login_id 기반 created_by, updated_by 저장
+PostgREST schema cache에서 public.routes 테이블을 찾지 못함
 ```
 
-백엔드 테스트:
+조치 후 확인:
 
 ```text
-python -m pytest backend/tests
-5 passed
+GET /api/v1/routes/feed?page=1&size=20&activity_type=RUN
+200 OK
 ```
 
-### 4. 환경변수 분리
+### 3. PostGIS geography 타입
+
+`start_point`, `end_point`는 GPS 위치 저장과 거리 기반 검색을 위해 PostGIS
+`geography(POINT, 4326)` 타입을 사용한다.
+
+필요 기능:
 
 ```text
-backend/.env
-- SUPABASE_URL
-- SUPABASE_ANON_KEY
-- SUPABASE_SERVICE_ROLE_KEY
-
-kkamyang-app/.env
-- EXPO_PUBLIC_API_BASE_URL
-- EXPO_PUBLIC_SUPABASE_URL
-- EXPO_PUBLIC_SUPABASE_ANON_KEY
-- EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+- 주변 Route 조회
+- Route Similarity 시작점 반경 300m 판정
+- Route Similarity 종료점 반경 300m 판정
+- GIST 공간 인덱스 기반 검색
 ```
 
 주의:
 
 ```text
-SUPABASE_SERVICE_ROLE_KEY는 백엔드 전용 secret
-Expo 앱 또는 EXPO_PUBLIC_* 변수로 노출 금지
-.env 실제 값 문서화 및 로그 출력 금지
+- geography는 PostgreSQL 기본 타입이 아니라 PostGIS extension 제공 타입
+- PostGIS가 활성화되지 않으면 type "geography" does not exist 오류 발생
+- PostGIS 설치 스키마에 따라 스키마 한정 타입명을 사용
+- 좌표 입력 순서는 POINT(longitude latitude)
 ```
 
-백엔드는 `.env` 자동 로딩을 하지 않으므로 다음 명령으로 실행한다.
+설치 위치 확인 SQL:
 
-```powershell
-python -m uvicorn app.main:app --reload --app-dir backend --host 0.0.0.0 --port 8000 --env-file backend\.env
+```sql
+select
+  e.extname,
+  n.nspname as extension_schema
+from pg_extension e
+join pg_namespace n on n.oid = e.extnamespace
+where e.extname = 'postgis';
+
+select
+  n.nspname as type_schema,
+  t.typname
+from pg_type t
+join pg_namespace n on n.oid = t.typnamespace
+where t.typname = 'geography';
 ```
 
-### 5. Android 실기기 연결
+PostgREST schema cache 갱신:
 
-Expo Go 개발 중 Android cleartext HTTP 요청이 실패했으며 HTTPS 터널로 연결했다.
-
-```text
-휴대폰 앱
-→ https://...trycloudflare.com
-→ cloudflared
-→ http://127.0.0.1:8000 또는 http://localhost:8000
-→ FastAPI
-```
-
-실제 tunnel URL과 `.env` 실제 값은 문서화하지 않는다.
-
-### 6. 최신 앱 검증 로그
-
-확인 완료:
-
-```text
-[API] response status GET /users/me 200
-[API] response success GET /users/me true
-[Auth] users/me response user exists true
-[Auth] users/me response login_id not-null
+```sql
+NOTIFY pgrst, 'reload schema';
 ```
 
 ---
 
 ## 남은 작업
 
-### 1. Supabase 저장 결과 확인
+### 1. Feed 데이터 렌더링 QA
 
-Supabase SQL Editor에서 신규 소셜 회원 row를 확인한다.
+현재 빈 Feed 요청은 `200 OK`까지 확인했다.
 
-```sql
-select
-  auth_provider,
-  login_id,
-  created_by,
-  updated_by,
-  deleted_yn
-from public.users;
-```
-
-정상 기준:
+다음 확인:
 
 ```text
-auth_provider = GOOGLE
-login_id = social_ 접두사
-created_by = login_id
-updated_by = login_id
-deleted_yn = N
+1. public.routes에 테스트용 PUBLIC, RUN, deleted_yn = N row 준비
+2. 작성자는 users.deleted_yn = N 상태 유지
+3. Android 앱에서 Feed 카드 렌더링 확인
+4. PRIVATE Route와 삭제 Route가 Feed에 노출되지 않는지 확인
+5. 작성자가 삭제 처리된 Route가 Feed에 노출되지 않는지 확인
 ```
 
-`login_provider` 및 FK도 확인한다.
+실제 UUID, login_id, 이메일, Secret은 문서 또는 로그에 기록하지 않는다.
 
-```sql
-select provider_code, is_active, sort_order, created_by, updated_by
-from public.login_provider
-order by sort_order, provider_code;
+### 2. 백엔드 전체 검증
 
-select conname, pg_get_constraintdef(oid)
-from pg_constraint
-where conrelid = 'public.users'::regclass;
-```
-
-정상 기준:
+Feed 구현 직후 검증 결과:
 
 ```text
-GOOGLE, NAVER, LOCAL 존재
-초기 created_by, updated_by = SYSTEM
-fk_users_login_provider 존재
+python -m pytest backend/tests -q
+12 passed
 ```
 
-### 2. Routes Feed 백엔드 구현
+이후 Supabase 오류 원인 식별을 위해 안전한 진단 로그 테스트를 추가했다.
+변경사항 커밋 전 전체 테스트를 다시 실행한다.
 
-현재 앱 로그:
+```powershell
+python -m pytest backend/tests -q
+git diff --check
+```
+
+### 3. 변경사항 검토 및 커밋
+
+현재 Feed 구현, 테스트, PDCA 문서, DDL 참고 문구 변경사항이 아직 커밋되지 않았다.
+
+검토 대상:
 
 ```text
-GET /api/v1/routes/feed?page=1&size=20&activity_type=RUN
-→ 404 Not Found
+backend/
+docs/db/db_dml.md
+docs/01-plan/
+docs/02-design/
+docs/03-analysis/
+docs/04-report/
+docs/superpowers/
+docs/HANDOFF.md
 ```
 
-원인:
+### 4. 다음 기능
+
+Feed QA와 커밋 이후 진행:
 
 ```text
-프론트 routeService는 Feed API를 호출하지만 FastAPI에는 해당 endpoint가 아직 없음
+docs/task/TASK-010-route-detail.md
 ```
 
-구현 대상:
+---
+
+## 실행 명령
+
+백엔드:
+
+```powershell
+python -m uvicorn app.main:app --reload --app-dir backend --host 0.0.0.0 --port 8000 --env-file backend\.env
+```
+
+Android 실기기 연결:
 
 ```text
-GET /api/v1/routes/feed
+휴대폰 앱
+→ HTTPS tunnel
+→ FastAPI
 ```
 
-참고 문서:
-
-```text
-docs/api-spec.md
-docs/task/TASK-009-route-feed.md
-```
-
-추가 확인:
-
-```text
-Feed 요청 로그에서 authorization exists false 확인
-Feed를 공개 API로 유지할지, 로그인 사용자 token을 전달할지 API 정책 검토 필요
-FastAPI 기본 404 응답에서 API 로그가 undefined undefined로 출력되므로 공통 오류 처리 보강 검토
-```
-
-### 3. HTTPS 개발 방식 결정
-
-```text
-선택지 A: Expo Go 유지, 개발 중 cloudflared HTTPS tunnel 사용
-선택지 B: Development build 사용, Expo SDK 54 공식 문서 기준 Android cleartext 설정 검토
-```
+실제 tunnel URL과 `.env` 값은 문서화하지 않는다.
 
 ---
 

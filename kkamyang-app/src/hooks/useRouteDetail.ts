@@ -25,7 +25,7 @@ export function useRouteDetail(routeId: number | null) {
     setErrorMessage(null);
 
     try {
-      const detail = await routeService.getDetail(routeId);
+      const detail = await routeService.getDetail(routeId, session?.access_token);
       setRoute(detail);
     } catch (error) {
       setErrorMessage(
@@ -34,7 +34,7 @@ export function useRouteDetail(routeId: number | null) {
     } finally {
       setIsLoading(false);
     }
-  }, [routeId]);
+  }, [routeId, session?.access_token]);
 
   const toggleLike = useCallback(async () => {
     if (!session) {

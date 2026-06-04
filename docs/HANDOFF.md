@@ -1,5 +1,195 @@
 # KKamyang HANDOFF
 
+## 2026-06-04 최신 인계 요약
+
+### 현재 완료 상태
+
+- Feed QA Refresh 이후 public RUN Feed 카드 표시 검증 완료.
+- Feed 카드 기준 Like / Bookmark 버튼 표시 및 색상 변경 검증 완료.
+- Route Detail API `200 OK`, Detail 화면 표시, 상태 표시 검증 완료.
+- 댓글 임시 기능은 Detail 화면 진입 대신 Feed QA 영역에서 바로 접근하도록 변경 완료.
+- 사용자가 실제 기기/화면에서 다음 흐름을 검증 완료:
+
+```text
+Feed QA Refresh
+-> Open Route Detail / Comments 버튼 표시
+-> 버튼 클릭 시 같은 Feed 화면 아래에 댓글 입력 영역 표시
+-> Save / Delete 버튼 표시
+-> 실제 DB route_comments 입력/수정/삭제 반영
+```
+
+### 이번 작업에서 변경한 핵심 내용
+
+Backend:
+
+```text
+PATCH  /api/v1/routes/{route_id}/comments/{comment_id}
+DELETE /api/v1/routes/{route_id}/comments/{comment_id}
+```
+
+- 댓글 수정 API 추가.
+- 댓글 삭제 API 추가.
+- 댓글 삭제는 물리 삭제가 아니라 `deleted_yn = Y`, `deleted_at` 세팅 방식의 soft delete로 처리.
+- 댓글 create/delete 이후 `routes.comment_count` 재계산 반영.
+- 댓글 update/delete는 로그인 사용자 본인 댓글만 가능하도록 service 계층에서 owner check 수행.
+
+Frontend:
+
+- `Open Route Detail / Comments` 버튼에서 `navigation.navigate("RouteDetail")` 호출 제거.
+- 버튼 클릭 시 Feed QA 영역 아래에 댓글 입력창 표시.
+- 입력창 오른쪽에 `Save`, `Delete` 버튼 표시.
+- `Save` 동작:
+  - 선택된 댓글이 없으면 create.
+  - 댓글 목록에서 기존 댓글을 선택한 상태면 update.
+- `Delete` 동작:
+  - 선택된 댓글이 있으면 실제 backend DELETE API 호출.
+  - 선택된 댓글이 없으면 입력 draft만 초기화.
+- Feed 화면에서 `useAuth()` 구독을 사용하지 않음.
+  - 이전 무한 루프 재발 방지를 위해 버튼 액션 시점에만 `authService.getSession()` 호출.
+
+### 관련 변경 파일
+
+```text
+backend/api/route_api.py
+backend/services/route_service.py
+backend/repositories/route_repository.py
+backend/tests/test_route_feed.py
+backend/tests/test_route_repository.py
+
+kkamyang-app/src/services/apiClient.ts
+kkamyang-app/src/services/commentService.ts
+kkamyang-app/src/types/route.ts
+kkamyang-app/src/hooks/useFeedQaComments.ts
+kkamyang-app/src/screens/route/RouteFeedScreen.tsx
+```
+
+주의:
+
+```text
+git status에는 이전 TASK-010/TASK-011/TASK-012 작업에서 이미 수정된 파일도 함께 보일 수 있다.
+이번 인계 기준 핵심 신규 파일은 kkamyang-app/src/hooks/useFeedQaComments.ts 이다.
+```
+
+### 검증 결과
+
+Backend:
+
+```powershell
+python -m pytest backend\tests -q
+```
+
+결과:
+
+```text
+41 passed
+```
+
+주의:
+
+```text
+PytestCacheWarning은 .pytest_cache 디렉터리 쓰기 권한 문제이다.
+테스트 실패가 아니며 현재 테이블 생성 상태와도 무관하다.
+```
+
+Frontend:
+
+```powershell
+npx.cmd tsc --noEmit
+```
+
+결과:
+
+```text
+통과
+```
+
+Diff 검사:
+
+```powershell
+git diff --check
+```
+
+결과:
+
+```text
+whitespace error 없음
+CRLF 변환 경고만 표시됨
+```
+
+### 현재 남아있는 주의사항
+
+- `route_comments` 테이블은 이미 생성되어 있으므로 추가 DDL 작업은 하지 않는다.
+- `.env` 실제 값은 확인하거나 문서화하지 않는다.
+- Screen 직접 fetch 금지 규칙 유지.
+  - Screen -> Hook -> Service -> apiClient 흐름 유지.
+- Feed 화면에서 인증 상태 구독 훅을 추가하지 않는다.
+  - 이전 무한 루프 원인은 Feed 화면 렌더/인증 구독/Feed refresh가 서로 엮인 반복 호출이었다.
+- HANDOFF 기존 본문은 인코딩이 깨진 상태로 보인다.
+  - 이번 인계는 상단의 정상 UTF-8 섹션을 최신 기준으로 사용한다.
+
+### 이후 작업해야 할 내용
+
+1. 댓글 임시 UI를 정식 댓글 컴포넌트로 분리
+
+```text
+현재는 QA 목적상 RouteFeedScreen 내부에 FeedQaCommentEditor가 있다.
+다음 단계에서는 재사용 가능한 CommentEditor 또는 RouteCommentPanel 컴포넌트로 분리한다.
+```
+
+2. 댓글 목록 UX 정리
+
+```text
+- 선택된 댓글 표시 방식 개선
+- update 모드 / create 모드 구분 표시
+- 저장 완료 후 draft 초기화 여부 정책 결정
+- 삭제 전 확인 UX 필요 여부 결정
+```
+
+3. Detail 화면 댓글 기능과 Feed QA 임시 기능의 역할 정리
+
+```text
+현재 요구사항은 Detail 진입보다 Feed QA 영역에서 댓글 입력이었다.
+추후 실제 제품 UX에서는 Route Detail 화면에 정식 댓글 작성/목록을 유지할지,
+Feed QA 임시 패널은 제거할지 결정해야 한다.
+```
+
+4. Like / Bookmark 실제 API 연동 상태 재점검
+
+```text
+현재 Feed QA 버튼 색상 변경은 화면 상태 표현 중심이다.
+TASK-011에서 구현된 실제 like/bookmark API와 Feed QA 버튼이 완전히 연결되어 있는지
+최종 제품 흐름 기준으로 재확인한다.
+```
+
+5. TASK 문서 정리
+
+```text
+TASK-010 route detail
+TASK-011 like/bookmark
+TASK-012 comments
+```
+
+각 문서에 다음을 최신화한다:
+
+```text
+- 구현 완료 범위
+- 실행한 명령
+- QA 로그/결과
+- 남은 임시 구현
+- 정식 UX 전환 시 해야 할 일
+```
+
+6. pycache 상태 정리
+
+```text
+pytest 실행 후 tracked __pycache__ 파일이 수정 상태로 나타날 수 있다.
+기능 변경이 아니므로 커밋 전 제외하거나 원복한다.
+일반 git restore가 .git/index.lock 권한 문제로 실패할 수 있으므로,
+필요 시 승인된 권한으로 pycache만 정리한다.
+```
+
+---
+
 ## 현재 상태
 
 - MVP 안정화 및 Android 실기기 QA 진행 중

@@ -27,6 +27,19 @@ export const apiClient = {
     });
   },
 
+  async patch<TData, TBody extends object>(
+    path: string,
+    body: TBody,
+    accessToken?: string,
+  ): Promise<TData> {
+    return request<TData>({
+      method: "PATCH",
+      path,
+      body,
+      accessToken,
+    });
+  },
+
   async delete<TData>(path: string, accessToken?: string): Promise<TData> {
     return request<TData>({
       method: "DELETE",
@@ -37,7 +50,7 @@ export const apiClient = {
 } as const;
 
 type ApiRequest = {
-  method: "DELETE" | "GET" | "POST";
+  method: "DELETE" | "GET" | "PATCH" | "POST";
   path: string;
   accessToken?: string;
   body?: object;

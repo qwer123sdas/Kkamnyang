@@ -86,6 +86,17 @@ export type RouteCommentCreateResponse = {
   created_at: string;
 };
 
+export type RouteCommentUpdateRequest = {
+  content: string;
+};
+
+export type RouteCommentUpdateResponse = RouteCommentCreateResponse;
+
+export type RouteCommentDeleteResponse = {
+  comment_id: number;
+  route_id: number;
+};
+
 export type RouteCommentsResponse = {
   items: RouteComment[];
   page: number;

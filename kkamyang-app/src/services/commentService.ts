@@ -1,6 +1,9 @@
 import type {
   RouteCommentCreateRequest,
   RouteCommentCreateResponse,
+  RouteCommentDeleteResponse,
+  RouteCommentUpdateRequest,
+  RouteCommentUpdateResponse,
   RouteCommentsResponse,
 } from "../types/route";
 import { apiClient } from "./apiClient";
@@ -45,6 +48,30 @@ export const commentService = {
     return apiClient.post<RouteCommentCreateResponse, RouteCommentCreateRequest>(
       `/routes/${routeId}/comments`,
       body,
+      accessToken,
+    );
+  },
+
+  async updateComment(
+    routeId: number,
+    commentId: number,
+    body: RouteCommentUpdateRequest,
+    accessToken: string,
+  ): Promise<RouteCommentUpdateResponse> {
+    return apiClient.patch<RouteCommentUpdateResponse, RouteCommentUpdateRequest>(
+      `/routes/${routeId}/comments/${commentId}`,
+      body,
+      accessToken,
+    );
+  },
+
+  async deleteComment(
+    routeId: number,
+    commentId: number,
+    accessToken: string,
+  ): Promise<RouteCommentDeleteResponse> {
+    return apiClient.delete<RouteCommentDeleteResponse>(
+      `/routes/${routeId}/comments/${commentId}`,
       accessToken,
     );
   },

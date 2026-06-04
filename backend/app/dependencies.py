@@ -39,4 +39,4 @@ def get_user_service() -> UserService:
 
 def get_route_service() -> RouteService:
     settings = get_settings()
-    return RouteService(RouteRepository(settings))
+    return RouteService(RouteRepository(settings), UserRepository(settings))

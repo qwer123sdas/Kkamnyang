@@ -45,8 +45,8 @@ export const routeService = {
     );
   },
 
-  async getDetail(routeId: number): Promise<RouteDetail> {
-    return apiClient.get<RouteDetail>(`/routes/${routeId}`);
+  async getDetail(routeId: number, accessToken?: string): Promise<RouteDetail> {
+    return apiClient.get<RouteDetail>(`/routes/${routeId}`, accessToken);
   },
 
   async getMyRoutes(

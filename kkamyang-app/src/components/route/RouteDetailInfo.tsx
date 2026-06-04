@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { RunningMap } from "../map/RunningMap";
 import type { GeoPoint } from "../../types/geo";
@@ -7,9 +7,9 @@ import type { RouteDetail } from "../../types/route";
 type RouteDetailInfoProps = {
   isBookmarkUpdating: boolean;
   isLikeUpdating: boolean;
-  route: RouteDetail;
   onToggleBookmark: () => void;
   onToggleLike: () => void;
+  route: RouteDetail;
 };
 
 function formatDuration(durationSec: number) {
@@ -86,24 +86,94 @@ export function RouteDetailInfo({
       <Text>Bookmarks: {route.bookmark_count}</Text>
       <Text>Liked: {route.is_liked ? "Yes" : "No"}</Text>
       <Text>Bookmarked: {route.is_bookmarked ? "Yes" : "No"}</Text>
-      <Button
-        disabled={isLikeUpdating}
-        onPress={onToggleLike}
-        title={route.is_liked ? "Unlike" : "Like"}
-      />
-      <Button
-        disabled={isBookmarkUpdating}
-        onPress={onToggleBookmark}
-        title={route.is_bookmarked ? "Remove Bookmark" : "Bookmark"}
-      />
+      <View style={styles.actionRow}>
+        <Pressable
+          accessibilityRole="button"
+          disabled={isLikeUpdating}
+          onPress={onToggleLike}
+          style={[
+            styles.actionButton,
+            route.is_liked ? styles.likeButtonActive : styles.actionButtonInactive,
+            isLikeUpdating ? styles.actionButtonDisabled : null,
+          ]}
+        >
+          <Text
+            style={[
+              styles.actionButtonText,
+              route.is_liked ? styles.actionButtonTextActive : null,
+            ]}
+          >
+            {route.is_liked ? "Liked" : "Like"}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          disabled={isBookmarkUpdating}
+          onPress={onToggleBookmark}
+          style={[
+            styles.actionButton,
+            route.is_bookmarked
+              ? styles.bookmarkButtonActive
+              : styles.actionButtonInactive,
+            isBookmarkUpdating ? styles.actionButtonDisabled : null,
+          ]}
+        >
+          <Text
+            style={[
+              styles.actionButtonText,
+              route.is_bookmarked ? styles.actionButtonTextActive : null,
+            ]}
+          >
+            {route.is_bookmarked ? "Bookmarked" : "Bookmark"}
+          </Text>
+        </Pressable>
+      </View>
       <Text>Encoded Polyline: {route.encoded_polyline}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  actionButton: {
+    alignItems: "center",
+    borderRadius: 8,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: "center",
+    minHeight: 44,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  actionButtonDisabled: {
+    opacity: 0.55,
+  },
+  actionButtonInactive: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "#D1D5DB",
+  },
+  actionButtonText: {
+    color: "#111827",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  actionButtonTextActive: {
+    color: "#FFFFFF",
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 12,
+  },
+  bookmarkButtonActive: {
+    backgroundColor: "#2563EB",
+    borderColor: "#2563EB",
+  },
   container: {
     padding: 16,
+  },
+  likeButtonActive: {
+    backgroundColor: "#DC2626",
+    borderColor: "#DC2626",
   },
   title: {
     fontSize: 18,

@@ -27,21 +27,15 @@ export function useRouteFeed() {
         page: nextPage,
         size: ROUTE_FEED_PAGE_SIZE,
       });
-      console.log("[Feed QA] response items count", feed.items.length);
-      console.log("[Feed QA] response page", feed.page);
-      console.log("[Feed QA] response has_next", feed.has_next);
 
       const publicRunRoutes = feed.items.filter(
         (item) => item.visibility === "PUBLIC" && item.activity_type === "RUN",
       );
-      console.log("[Feed QA] public RUN items count", publicRunRoutes.length);
-      console.log("[Feed QA] public RUN item exists", publicRunRoutes.length > 0);
 
       setItems((currentItems) => {
         const nextItems = replace
           ? publicRunRoutes
           : [...currentItems, ...publicRunRoutes];
-        console.log("[Feed QA] state items count", nextItems.length);
         return nextItems;
       });
       setPage(feed.page);

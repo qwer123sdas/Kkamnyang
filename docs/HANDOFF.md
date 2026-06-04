@@ -1,4 +1,4 @@
-# KKamyang HANDOFF
+﻿# KKamyang HANDOFF
 
 ## 2026-06-04 최신 인계 요약
 
@@ -190,6 +190,23 @@ pytest 실행 후 tracked __pycache__ 파일이 수정 상태로 나타날 수 �
 
 ---
 
+## 아래 기존 본문에 대한 정정
+
+아래 본문은 과거 Feed backend 완료 시점의 기록이다.
+아래에 남아 있는 `TASK-010-route-detail` 문구는 당시의 다음 작업이었고, 최신 상태가 아니다.
+
+현재 기준:
+
+```text
+TASK-010 route detail: 진행 및 검증 완료
+TASK-011 like/bookmark: 진행 및 검증 완료
+TASK-012 comments: 진행 및 검증 완료
+```
+
+이후 작업은 문서 상단 `2026-06-04 최신 인계 요약`의 `이후 작업해야 할 내용`을 따른다.
+
+---
+
 ## 현재 상태
 
 - MVP 안정화 및 Android 실기기 QA 진행 중
@@ -361,10 +378,8 @@ docs/HANDOFF.md
 
 ### 4. 다음 기능
 
-Feed QA와 커밋 이후 진행:
-
 ```text
-docs/task/TASK-010-route-detail.md
+docs/task/TASK-013.md
 ```
 
 ---

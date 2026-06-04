@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button, FlatList, RefreshControl, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -19,7 +20,14 @@ export default function RouteFeedScreen() {
     refresh,
   } = useRouteFeed();
 
+  useEffect(() => {
+    console.log("[Feed QA] screen items count", items.length);
+    console.log("[Feed QA] screen card renderable", items.length > 0);
+  }, [items.length]);
+
   function renderItem({ item }: { item: RouteFeedItem }) {
+    console.log("[Feed QA] card rendered route_id exists", Boolean(item.route_id));
+
     return (
       <RouteCard
         onPress={() =>
@@ -35,6 +43,7 @@ export default function RouteFeedScreen() {
       <Text>Route Feed Screen</Text>
       <Button onPress={() => navigation.navigate("Record")} title="Record" />
       <Button onPress={() => navigation.navigate("Profile")} title="Profile" />
+      <Button onPress={refresh} title="Feed QA Refresh" />
       {errorMessage ? <Text>{errorMessage}</Text> : null}
       <FlatList
         data={items}

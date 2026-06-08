@@ -104,6 +104,49 @@ def test_route_repository_queries_public_routes_with_embedded_active_user():
     ]
 
 
+def test_route_repository_queries_my_routes_by_owner():
+    repository = CapturingRouteRepository(
+        [
+            {
+                "route_id": 10,
+                "title": "Morning run",
+                "activity_type": "RUN",
+                "visibility": "PRIVATE",
+                "encoded_polyline": "xxxxx",
+                "distance_km": "5.210",
+                "duration_sec": 1830,
+                "created_at": "2026-05-19T10:00:00Z",
+            }
+        ]
+    )
+
+    result = repository.list_my_routes(
+        page=2,
+        size=20,
+        user_id="00000000-0000-0000-0000-000000000001",
+    )
+
+    query = parse_qs(urlsplit(repository.request["path"]).query)
+    assert repository.request["method"] == "GET"
+    assert query["user_id"] == ["eq.00000000-0000-0000-0000-000000000001"]
+    assert query["deleted_yn"] == ["eq.N"]
+    assert query["order"] == ["created_at.desc"]
+    assert query["offset"] == ["20"]
+    assert query["limit"] == ["21"]
+    assert result == [
+        {
+            "route_id": 10,
+            "title": "Morning run",
+            "activity_type": "RUN",
+            "visibility": "PRIVATE",
+            "encoded_polyline": "xxxxx",
+            "distance_km": 5.21,
+            "duration_sec": 1830,
+            "created_at": "2026-05-19T10:00:00Z",
+        }
+    ]
+
+
 def test_route_repository_rejects_route_without_embedded_user():
     repository = CapturingRouteRepository([{"route_id": 10, "users": None}])
 

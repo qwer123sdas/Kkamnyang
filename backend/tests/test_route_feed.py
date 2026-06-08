@@ -38,6 +38,28 @@ class FakeRouteService:
             "has_next": True,
         }
 
+    def get_my_routes(self, page: int, size: int, user_id: str):
+        assert page == 1
+        assert size == 20
+        assert user_id == "00000000-0000-0000-0000-000000000001"
+        return {
+            "items": [
+                {
+                    "route_id": 10,
+                    "title": "Morning run",
+                    "activity_type": "RUN",
+                    "visibility": "PRIVATE",
+                    "encoded_polyline": "xxxxx",
+                    "distance_km": 5.21,
+                    "duration_sec": 1830,
+                    "created_at": "2026-05-19T10:00:00Z",
+                }
+            ],
+            "page": page,
+            "size": size,
+            "has_next": False,
+        }
+
     def get_detail(self, route_id: int, viewer_user_id: str | None = None):
         assert route_id == 10
         return {
@@ -205,6 +227,38 @@ def test_route_feed_is_public_and_returns_paginated_routes():
             "page": 1,
             "size": 1,
             "has_next": True,
+        },
+        "message": None,
+    }
+    app.dependency_overrides.clear()
+
+
+def test_my_routes_requires_authentication_and_returns_paginated_routes():
+    app.dependency_overrides[get_route_service] = override_route_service
+    app.dependency_overrides[get_current_auth_user] = override_current_auth_user
+    client = TestClient(app)
+
+    response = client.get("/api/v1/routes/me?page=1&size=20")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "success": True,
+        "data": {
+            "items": [
+                {
+                    "route_id": 10,
+                    "title": "Morning run",
+                    "activity_type": "RUN",
+                    "visibility": "PRIVATE",
+                    "encoded_polyline": "xxxxx",
+                    "distance_km": 5.21,
+                    "duration_sec": 1830,
+                    "created_at": "2026-05-19T10:00:00Z",
+                }
+            ],
+            "page": 1,
+            "size": 20,
+            "has_next": False,
         },
         "message": None,
     }

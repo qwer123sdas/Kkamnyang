@@ -20,6 +20,10 @@ ROUTE_DETAIL_SELECT = (
     "route_geojson,distance_km,duration_sec,like_count,comment_count,"
     "bookmark_count,created_at,users!inner(user_id,login_id,nickname)"
 )
+MY_ROUTE_SELECT = (
+    "route_id,title,activity_type,visibility,encoded_polyline,"
+    "distance_km,duration_sec,created_at"
+)
 COMMENT_SELECT = "comment_id,content,created_at,users!inner(user_id,login_id,nickname)"
 logger = logging.getLogger(__name__)
 
@@ -77,6 +81,29 @@ class RouteRepository:
             return None
 
         return self._to_route_detail_response(payload[0])
+
+    def list_my_routes(self, page: int, size: int, user_id: str):
+        payload = self._request(
+            method="GET",
+            path=(
+                "/rest/v1/routes?"
+                + urlencode(
+                    {
+                        "user_id": f"eq.{user_id}",
+                        "deleted_yn": "eq.N",
+                        "select": MY_ROUTE_SELECT,
+                        "order": "created_at.desc",
+                        "offset": (page - 1) * size,
+                        "limit": size + 1,
+                    }
+                )
+            ),
+        )
+
+        if not isinstance(payload, list):
+            raise ApiError(500, "Invalid my routes response", "INTERNAL_ERROR")
+
+        return [self._to_my_route_response(row) for row in payload]
 
     def set_route_liked(
         self,
@@ -356,6 +383,24 @@ class RouteRepository:
         route["is_bookmarked"] = False
 
         return route
+
+    def _to_my_route_response(self, row: dict[str, Any]) -> dict[str, Any]:
+        distance_km = row.get("distance_km")
+        try:
+            normalized_distance_km = float(distance_km) if distance_km is not None else None
+        except (TypeError, ValueError):
+            raise ApiError(500, "Invalid my routes response", "INTERNAL_ERROR")
+
+        return {
+            "route_id": row.get("route_id"),
+            "title": row.get("title"),
+            "activity_type": row.get("activity_type"),
+            "visibility": row.get("visibility"),
+            "encoded_polyline": row.get("encoded_polyline"),
+            "distance_km": normalized_distance_km,
+            "duration_sec": row.get("duration_sec"),
+            "created_at": row.get("created_at"),
+        }
 
     def _to_comment_response(self, row: dict[str, Any]) -> dict[str, Any]:
         user = row.get("users")

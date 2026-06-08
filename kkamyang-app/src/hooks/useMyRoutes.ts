@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { authService } from "../services/authService";
 import { routeService } from "../services/routeService";
 import type { MyRouteItem } from "../types/route";
-import { useAuth } from "./useAuth";
 
 const MY_ROUTES_PAGE_SIZE = 20;
 
 export function useMyRoutes() {
-  const { session } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasNext, setHasNext] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +16,8 @@ export function useMyRoutes() {
 
   const loadPage = useCallback(
     async (nextPage: number, replace = false) => {
+      const session = await authService.getSession();
+
       if (!session) {
         setItems([]);
         setErrorMessage("AUTH_REQUIRED");
@@ -54,7 +55,7 @@ export function useMyRoutes() {
         setIsRefreshing(false);
       }
     },
-    [session],
+    [],
   );
 
   const refresh = useCallback(async () => {

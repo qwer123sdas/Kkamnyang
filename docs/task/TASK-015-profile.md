@@ -1,5 +1,47 @@
 # TASK-015-profile
 
+## 2026-06-08 Progress
+
+### Completed
+
+```text
+1. ProfileScreen 기존 구현 확인
+2. userService.getMe를 통한 GET /api/v1/users/me 호출 유지
+3. ProfileSummary에서 nickname, login_id, email, profile_image_url 표시 확인
+4. 운동 요약 placeholder 표시 유지
+5. My Routes / Bookmarks 진입 버튼 유지
+6. useProfile에서 useAuth 구독 제거
+7. Profile 조회 시 authService.getSession()을 1회 호출해 access token 전달
+```
+
+### Changed Files
+
+```text
+kkamyang-app/src/hooks/useProfile.ts
+docs/task/TASK-015-profile.md
+```
+
+### Commands
+
+```powershell
+npx.cmd tsc --noEmit
+rg -n "useAuth\(|authService\.getSession|userService\.getMe|/users/me|fetch\(" kkamyang-app\src\screens\profile kkamyang-app\src\hooks\useProfile.ts kkamyang-app\src\services\userService.ts kkamyang-app\src\services\authService.ts
+rg -n "logout|signOut|profile_image.*upload|chart|victory|recharts|statistics|stats" kkamyang-app\src\screens\profile kkamyang-app\src\components\profile kkamyang-app\src\hooks\useProfile.ts kkamyang-app\src\services\userService.ts
+```
+
+### QA Flow
+
+```text
+1. Login
+2. Route Feed
+3. Profile
+4. Profile Screen 표시 확인
+5. nickname/login_id/email/profile_image_url 표시 확인
+6. 운동 요약 placeholder 표시 확인
+7. My Routes 버튼 진입 확인
+8. Bookmarks 버튼 진입 확인
+```
+
 ## Goal
 
 내 프로필 화면을 구현한다.

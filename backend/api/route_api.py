@@ -45,6 +45,18 @@ def get_optional_auth_user(
     return get_auth_service().verify_access_token(access_token)
 
 
+@router.get("/routes/me")
+def get_my_routes(
+    page: int = Query(ge=1),
+    size: int = Query(ge=1, le=50),
+    auth_user: AuthUser = Depends(get_current_auth_user),
+    route_service: RouteService = Depends(get_route_service),
+):
+    return success_response(
+        route_service.get_my_routes(page, size, auth_user.user_id),
+    )
+
+
 @router.get("/routes/{route_id}")
 def get_route_detail(
     route_id: int,

@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { commentService } from "../services/commentService";
+import { authService } from "../services/authService";
 import type { RouteComment } from "../types/route";
-import { useAuth } from "./useAuth";
 
 const COMMENT_PAGE_SIZE = 20;
 
 export function useRouteComments(routeId: number | null) {
-  const { session } = useAuth();
   const [comments, setComments] = useState<RouteComment[]>([]);
+  const [content, setContent] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasNext, setHasNext] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [page, setPage] = useState(1);
+  const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
 
   const loadPage = useCallback(
     async (nextPage: number, replace = false) => {
@@ -59,8 +61,10 @@ export function useRouteComments(routeId: number | null) {
     await loadPage(page + 1);
   }, [hasNext, isLoading, loadPage, page]);
 
-  const createComment = useCallback(
-    async (content: string) => {
+  const saveComment = useCallback(
+    async () => {
+      const session = await authService.getSession();
+
       if (!session) {
         setErrorMessage("AUTH_REQUIRED");
         return false;
@@ -78,42 +82,112 @@ export function useRouteComments(routeId: number | null) {
         return false;
       }
 
-      setIsCreating(true);
+      setIsSaving(true);
       setErrorMessage(null);
 
       try {
-        await commentService.createComment(
-          routeId,
-          { content: nextContent },
-          session.access_token,
-        );
+        if (selectedCommentId) {
+          await commentService.updateComment(
+            routeId,
+            selectedCommentId,
+            { content: nextContent },
+            session.access_token,
+          );
+        } else {
+          await commentService.createComment(
+            routeId,
+            { content: nextContent },
+            session.access_token,
+          );
+        }
         await refresh();
+        setContent("");
+        setSelectedCommentId(null);
         return true;
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : "COMMENT_CREATE_FAILED",
+          error instanceof Error ? error.message : "COMMENT_SAVE_FAILED",
         );
         return false;
       } finally {
-        setIsCreating(false);
+        setIsSaving(false);
       }
     },
-    [refresh, routeId, session],
+    [content, refresh, routeId, selectedCommentId],
   );
+
+  const deleteSelectedComment = useCallback(async () => {
+    if (!selectedCommentId) {
+      setContent("");
+      return false;
+    }
+
+    const session = await authService.getSession();
+
+    if (!session) {
+      setErrorMessage("AUTH_REQUIRED");
+      return false;
+    }
+
+    if (!routeId) {
+      setErrorMessage("ROUTE_ID_REQUIRED");
+      return false;
+    }
+
+    setIsDeleting(true);
+    setErrorMessage(null);
+
+    try {
+      await commentService.deleteComment(
+        routeId,
+        selectedCommentId,
+        session.access_token,
+      );
+      await refresh();
+      setContent("");
+      setSelectedCommentId(null);
+      return true;
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "COMMENT_DELETE_FAILED",
+      );
+      return false;
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [refresh, routeId, selectedCommentId]);
+
+  const selectComment = useCallback((comment: RouteComment) => {
+    setSelectedCommentId(comment.comment_id);
+    setContent(comment.content);
+  }, []);
+
+  const clearDraft = useCallback(() => {
+    setContent("");
+    setSelectedCommentId(null);
+    setErrorMessage(null);
+  }, []);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
   return {
+    clearDraft,
     comments,
-    createComment,
+    content,
+    deleteSelectedComment,
     errorMessage,
     hasNext,
-    isCreating,
+    isDeleting,
     isLoading,
+    isSaving,
     loadMore,
     page,
     refresh,
+    saveComment,
+    selectedCommentId,
+    selectComment,
+    setContent,
   };
 }

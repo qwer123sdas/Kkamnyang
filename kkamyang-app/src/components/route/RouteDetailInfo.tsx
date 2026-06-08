@@ -7,6 +7,8 @@ import type { RouteDetail } from "../../types/route";
 type RouteDetailInfoProps = {
   isBookmarkUpdating: boolean;
   isLikeUpdating: boolean;
+  onOpenHistory: () => void;
+  onOpenSimilarRoutes: () => void;
   onToggleBookmark: () => void;
   onToggleLike: () => void;
   route: RouteDetail;
@@ -64,6 +66,8 @@ function decodePolyline(encodedPolyline: string): GeoPoint[] {
 export function RouteDetailInfo({
   isBookmarkUpdating,
   isLikeUpdating,
+  onOpenHistory,
+  onOpenSimilarRoutes,
   onToggleBookmark,
   onToggleLike,
   route,
@@ -128,6 +132,20 @@ export function RouteDetailInfo({
           </Text>
         </Pressable>
       </View>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onOpenSimilarRoutes}
+        style={styles.secondaryButton}
+      >
+        <Text style={styles.secondaryButtonText}>View Similar Routes</Text>
+      </Pressable>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onOpenHistory}
+        style={styles.secondaryButton}
+      >
+        <Text style={styles.secondaryButtonText}>View History</Text>
+      </Pressable>
       <Text>Encoded Polyline: {route.encoded_polyline}</Text>
     </View>
   );
@@ -174,6 +192,21 @@ const styles = StyleSheet.create({
   likeButtonActive: {
     backgroundColor: "#DC2626",
     borderColor: "#DC2626",
+  },
+  secondaryButton: {
+    alignItems: "center",
+    backgroundColor: "#111827",
+    borderRadius: 8,
+    justifyContent: "center",
+    marginTop: 8,
+    minHeight: 44,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  secondaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "600",
   },
   title: {
     fontSize: 18,

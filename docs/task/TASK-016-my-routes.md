@@ -1,5 +1,54 @@
 # TASK-016-my-routes
 
+## 2026-06-08 Progress
+
+### Completed
+
+```text
+1. Backend GET /api/v1/routes/me endpoint 추가
+2. RouteService.get_my_routes 추가
+3. RouteRepository.list_my_routes 추가
+4. /routes/me가 /routes/{route_id}보다 먼저 매칭되도록 route_api 순서 조정
+5. useMyRoutes에서 useAuth 구독 제거
+6. My Routes 조회 시 authService.getSession()을 1회 호출해 access token 전달
+7. MyRoutesScreen의 RouteCard -> RouteDetail 진입 흐름 유지
+```
+
+### Changed Files
+
+```text
+backend/api/route_api.py
+backend/services/route_service.py
+backend/repositories/route_repository.py
+backend/tests/test_route_feed.py
+backend/tests/test_route_repository.py
+kkamyang-app/src/hooks/useMyRoutes.ts
+docs/task/TASK-016-my-routes.md
+```
+
+### Commands
+
+```powershell
+python -m pytest backend\tests\test_route_feed.py::test_my_routes_requires_authentication_and_returns_paginated_routes backend\tests\test_route_repository.py::test_route_repository_queries_my_routes_by_owner -q
+python -m pytest backend\tests -q
+npx.cmd tsc --noEmit
+rg -n "/routes/me|routes/me|useAuth\(|authService\.getSession|fetch\(" backend kkamyang-app\src\hooks\useMyRoutes.ts kkamyang-app\src\screens\route\MyRoutesScreen.tsx kkamyang-app\src\services\routeService.ts
+```
+
+### QA Flow
+
+```text
+1. Login
+2. Route Feed
+3. Profile
+4. My Routes
+5. My Routes Screen 표시 확인
+6. 내 route 목록 표시 확인
+7. RouteCard / Open Detail
+8. RouteDetail 진입 확인
+9. Pull to refresh / pagination 동작 확인
+```
+
 ## Goal
 
 내가 생성한 러닝 Route 목록 화면을 구현한다.

@@ -1,5 +1,47 @@
 # TASK-014-route-history
 
+## 2026-06-08 Progress
+
+### Completed
+
+```text
+1. Feed QA Refresh 버튼 제거
+2. Feed QA Actions 패널 및 임시 Like/Bookmark 토글 제거
+3. RouteDetail에서 View History 버튼 추가
+4. View History 버튼으로 RouteHistoryScreen 진입 연결
+5. 기존 routeHistoryService -> useRouteHistory -> RouteHistoryScreen -> RouteHistoryList 흐름 유지
+```
+
+### Changed Files
+
+```text
+kkamyang-app/src/screens/route/RouteFeedScreen.tsx
+kkamyang-app/src/components/route/RouteDetailInfo.tsx
+kkamyang-app/src/screens/route/RouteDetailScreen.tsx
+docs/HANDOFF.md
+docs/task/TASK-014-route-history.md
+```
+
+### Commands
+
+```powershell
+npx.cmd tsc --noEmit
+rg -n "Feed QA|FeedQa|QA Refresh|Open Route Detail / Comments|isFeedQa|useFeedQa" kkamyang-app\src docs\HANDOFF.md docs\task
+rg -n "RouteHistory|View History|/routes/\$\{routeId\}/history|routeHistoryService" kkamyang-app\src
+```
+
+### QA Flow
+
+```text
+1. Login
+2. Route Feed
+3. RouteCard / Open Detail
+4. Route Detail
+5. View History
+6. RouteHistoryScreen
+7. Activity history 목록 렌더링 확인
+```
+
 ## Goal
 
 Route 상세 화면에서 동일 Route의 과거 러닝 기록을 조회하고 표시한다.

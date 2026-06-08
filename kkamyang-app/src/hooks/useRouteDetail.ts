@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { bookmarkService } from "../services/bookmarkService";
+import { authService } from "../services/authService";
 import { likeService } from "../services/likeService";
 import { routeService } from "../services/routeService";
 import type { RouteDetail } from "../types/route";
-import { useAuth } from "./useAuth";
 
 export function useRouteDetail(routeId: number | null) {
-  const { session } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isBookmarkUpdating, setIsBookmarkUpdating] = useState(false);
   const [isLikeUpdating, setIsLikeUpdating] = useState(false);
@@ -25,6 +24,7 @@ export function useRouteDetail(routeId: number | null) {
     setErrorMessage(null);
 
     try {
+      const session = await authService.getSession();
       const detail = await routeService.getDetail(routeId, session?.access_token);
       setRoute(detail);
     } catch (error) {
@@ -34,9 +34,11 @@ export function useRouteDetail(routeId: number | null) {
     } finally {
       setIsLoading(false);
     }
-  }, [routeId, session?.access_token]);
+  }, [routeId]);
 
   const toggleLike = useCallback(async () => {
+    const session = await authService.getSession();
+
     if (!session) {
       setErrorMessage("AUTH_REQUIRED");
       return;
@@ -68,9 +70,11 @@ export function useRouteDetail(routeId: number | null) {
     } finally {
       setIsLikeUpdating(false);
     }
-  }, [isLikeUpdating, route, session]);
+  }, [isLikeUpdating, route]);
 
   const toggleBookmark = useCallback(async () => {
+    const session = await authService.getSession();
+
     if (!session) {
       setErrorMessage("AUTH_REQUIRED");
       return;
@@ -104,7 +108,7 @@ export function useRouteDetail(routeId: number | null) {
     } finally {
       setIsBookmarkUpdating(false);
     }
-  }, [isBookmarkUpdating, route, session]);
+  }, [isBookmarkUpdating, route]);
 
   useEffect(() => {
     void load();

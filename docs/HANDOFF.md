@@ -1,6 +1,270 @@
 ﻿# KKamyang HANDOFF
 
-## 2026-06-04 최신 인계 요약
+## 2026-06-08 최신 인계 요약
+
+### 현재 기준
+
+현재 QA 기준은 임시 Feed QA 기능이 아니라 실제 화면 흐름이다.
+
+```text
+Login
+-> RouteFeed
+-> RouteCard / Open Detail
+-> RouteDetail
+-> Comments / Similar Routes / History
+-> Profile
+-> My Routes / Bookmarks
+```
+
+주의:
+
+```text
+아래 2026-06-04 섹션의 Feed QA Refresh, Feed QA Actions,
+Feed inline comment editor, useFeedQaComments 관련 설명은 과거 기록이다.
+현재 기준으로는 사용하지 않는다.
+```
+
+### 완료한 작업
+
+TASK-012 comments:
+
+```text
+1. Feed inline comment editor 제거
+2. useFeedQaComments 제거
+3. RouteDetail의 Route Comments 영역에서 댓글 목록/작성/수정/삭제 수행
+4. CommentInput Save/Clear/Delete 지원
+5. CommentList 댓글 선택 및 선택 상태 표시
+```
+
+TASK-013 route cluster:
+
+```text
+1. routeClusterService -> useRouteCluster -> RouteClusterScreen -> RouteClusterList 흐름 유지
+2. RouteDetail에서 View Similar Routes 버튼으로 RouteClusterScreen 진입
+3. 유사도 계산, nearby, history 기능은 TASK-013 범위에서 추가하지 않음
+```
+
+TASK-014 route history:
+
+```text
+1. Feed QA Refresh 버튼 제거
+2. Feed QA Actions 패널 및 임시 Like/Bookmark 토글 제거
+3. RouteDetail에 View History 버튼 추가
+4. View History -> RouteHistoryScreen 진입 연결
+5. routeHistoryService -> useRouteHistory -> RouteHistoryScreen -> RouteHistoryList 흐름 유지
+```
+
+TASK-015 profile:
+
+```text
+1. ProfileScreen / ProfileSummary 기존 구현 확인
+2. userService.getMe로 GET /api/v1/users/me 호출 유지
+3. nickname, login_id, email, profile_image_url 표시
+4. 운동 요약 값은 API 응답에 없으면 placeholder 표시
+5. My Routes / Bookmarks 진입 버튼 유지
+6. useProfile에서 useAuth 구독 제거
+7. Profile 조회 시 authService.getSession() 1회 호출
+```
+
+TASK-016 my routes:
+
+```text
+1. Backend GET /api/v1/routes/me endpoint 추가
+2. RouteService.get_my_routes 추가
+3. RouteRepository.list_my_routes 추가
+4. /routes/me가 /routes/{route_id}보다 먼저 매칭되도록 route_api 순서 조정
+5. useMyRoutes에서 useAuth 구독 제거
+6. My Routes 조회 시 authService.getSession() 1회 호출
+7. MyRoutesScreen -> RouteCard -> RouteDetail 진입 흐름 유지
+```
+
+### 핵심 변경 파일
+
+Backend:
+
+```text
+backend/api/route_api.py
+backend/services/route_service.py
+backend/repositories/route_repository.py
+backend/tests/test_route_feed.py
+backend/tests/test_route_repository.py
+```
+
+Frontend:
+
+```text
+kkamyang-app/src/screens/route/RouteFeedScreen.tsx
+kkamyang-app/src/screens/route/RouteDetailScreen.tsx
+kkamyang-app/src/screens/route/RouteHistoryScreen.tsx
+kkamyang-app/src/screens/route/MyRoutesScreen.tsx
+kkamyang-app/src/screens/profile/ProfileScreen.tsx
+kkamyang-app/src/components/route/RouteCard.tsx
+kkamyang-app/src/components/route/RouteDetailInfo.tsx
+kkamyang-app/src/components/route/CommentInput.tsx
+kkamyang-app/src/components/route/CommentList.tsx
+kkamyang-app/src/components/route/RouteHistoryList.tsx
+kkamyang-app/src/hooks/useRouteDetail.ts
+kkamyang-app/src/hooks/useRouteComments.ts
+kkamyang-app/src/hooks/useRouteHistory.ts
+kkamyang-app/src/hooks/useProfile.ts
+kkamyang-app/src/hooks/useMyRoutes.ts
+kkamyang-app/src/services/routeHistoryService.ts
+kkamyang-app/src/services/routeService.ts
+```
+
+삭제:
+
+```text
+kkamyang-app/src/hooks/useFeedQaComments.ts
+```
+
+Docs:
+
+```text
+docs/task/TASK-012-comments.md
+docs/task/TASK-013-route-cluster.md
+docs/task/TASK-014-route-history.md
+docs/task/TASK-015-profile.md
+docs/task/TASK-016-my-routes.md
+docs/HANDOFF.md
+```
+
+### 검증 결과
+
+Backend:
+
+```powershell
+python -m pytest backend\tests -q
+```
+
+결과:
+
+```text
+43 passed
+```
+
+Frontend:
+
+```powershell
+npx.cmd tsc --noEmit
+```
+
+결과:
+
+```text
+통과
+```
+
+Diff 검사:
+
+```powershell
+git diff --check
+```
+
+결과:
+
+```text
+whitespace error 없음
+CRLF 변환 경고만 표시
+```
+
+주의:
+
+```text
+PytestCacheWarning은 .pytest_cache 쓰기 권한 문제이며 테스트 실패가 아니다.
+git status에는 pytest 실행으로 생긴 tracked __pycache__ 변경이 보일 수 있다.
+기능 변경이 아니므로 커밋 전 제외하거나 정리한다.
+```
+
+### 현재 QA 흐름
+
+Route Feed / Detail:
+
+```text
+1. Login
+2. Route Feed
+3. RouteCard / Open Detail
+4. Route Detail
+5. route 정보 확인
+6. Like / Bookmark 확인
+7. Comments Save / 선택 후 Save / 선택 후 Delete 확인
+8. View Similar Routes
+9. RouteClusterScreen 목록 표시 확인
+10. View History
+11. RouteHistoryScreen 목록 표시 확인
+```
+
+Profile / My Routes:
+
+```text
+1. Login
+2. Route Feed
+3. Profile
+4. ProfileScreen 표시 확인
+5. nickname / login_id / email / profile_image_url 확인
+6. summary placeholder 확인
+7. My Routes
+8. MyRoutesScreen 목록 표시 확인
+9. RouteCard / Open Detail
+10. RouteDetail 진입 확인
+```
+
+### 반드시 유지할 규칙
+
+```text
+1. Screen 직접 fetch 금지
+2. Screen -> Hook -> Service -> apiClient 흐름 유지
+3. Detail/Profile/MyRoutes 계열 hook에서 useAuth 구독 추가 금지
+4. 필요한 시점에 authService.getSession()을 1회 호출
+5. .env 실제 값 읽기/출력/요약 금지
+6. DB 스키마 임의 수정 금지
+7. API 응답 구조 임의 변경 금지
+8. 상태관리 라이브러리 추가/변경 금지
+9. Router 구조 변경 금지
+```
+
+### 다음에 진행할 작업
+
+다음 Task:
+
+```text
+docs/task/TASK-017-bookmarks.md
+```
+
+진행 전 확인할 내용:
+
+```text
+1. BookmarkScreen 기존 구현 상태 확인
+2. bookmarkService.getBookmarks 호출 위치 확인
+3. Backend GET /api/v1/bookmarks 또는 API spec 기준 실제 endpoint 존재 여부 확인
+4. useBookmarks에 useAuth 구독이 있다면 authService.getSession() 1회 호출 방식으로 안정화
+5. Bookmark 목록에서 RouteCard / Open Detail 진입 유지
+6. Bookmark 추가/삭제 기능은 TASK-017 범위인지 문서 기준으로 확인
+```
+
+TASK-017 예상 QA 흐름:
+
+```text
+1. Login
+2. Route Feed
+3. Profile
+4. Bookmarks
+5. BookmarkScreen 목록 표시 확인
+6. RouteCard / Open Detail
+7. RouteDetail 진입 확인
+```
+
+### 현재 작업 시 주의
+
+```text
+1. backend __pycache__ 변경은 기능 변경이 아니다.
+2. 커밋 전 tracked __pycache__ 파일은 제외하거나 정리한다.
+3. HANDOFF 아래쪽에는 과거 기록이 남아 있으므로 항상 이 2026-06-08 최신 인계 요약을 우선한다.
+```
+
+---
+
+## 2026-06-04 과거 인계 요약
 
 ### 현재 완료 상태
 
@@ -413,3 +677,113 @@ Android 실기기 연결:
 - Secret/env 실제 값 출력 금지
 - `SUPABASE_SERVICE_ROLE_KEY`는 백엔드 외부로 노출 금지
 - `.env` 실제 값 문서화 금지
+## 2026-06-08 최신 정정
+
+현재 QA 기준은 다음 흐름을 우선한다.
+
+```text
+Feed QA Refresh
+-> Open Route Detail / Comments
+-> Route Detail 화면 진입
+-> Route Comments 영역에서 Save / Delete
+-> View Similar Routes
+-> RouteClusterScreen
+```
+
+정정 사항:
+
+```text
+1. Open Route Detail / Comments 버튼은 다시 RouteDetail로 이동한다.
+2. Feed 화면의 inline 댓글 editor는 제거했다.
+3. 댓글 작성/수정/삭제는 RouteDetail 화면의 Route Comments 영역에서 수행한다.
+4. RouteCard에는 명시적인 Open Detail 버튼이 있다.
+5. 이전 2026-06-04 섹션의 Feed QA inline comments 설명은 과거 기록으로만 본다.
+```
+
+## 2026-06-08 Route Detail 접근 오류 정정
+
+원인:
+
+```text
+RouteDetailScreen 진입 시 useRouteDetail/useRouteComments 내부 useAuth 구독이 추가됨
+-> Supabase onAuthStateChange INITIAL_SESSION 이벤트 발생
+-> RootNavigator isLoading=true
+-> Navigator가 null 처리 후 재생성
+-> MainNavigator initialRouteName=RouteFeed로 복귀
+```
+
+수정 기준:
+
+```text
+1. RouteDetail 관련 hook에서는 useAuth 구독을 사용하지 않는다.
+2. Detail 조회는 authService.getSession()을 1회 호출해 token이 있으면 전달한다.
+3. Like/Bookmark/Comment Save/Delete는 버튼 액션 시점에만 authService.getSession()을 호출한다.
+4. QA 화면 흐름은 Feed -> RouteDetail -> Comments / Similar Routes 순서로 고정한다.
+```
+## 2026-06-08 최신 QA 기준
+
+현재 Feed QA 임시 기능은 제거되었다.
+
+```text
+RouteFeed
+-> Feed 목록
+-> RouteCard / Open Detail
+-> RouteDetail
+-> route 정보, Like / Bookmark, Comments, View Similar Routes, View History
+-> RouteCluster 또는 RouteHistory
+```
+
+정정 사항:
+
+```text
+1. Feed QA Refresh 버튼은 제거되었다.
+2. Feed QA Actions 패널과 임시 Like/Bookmark 토글은 제거되었다.
+3. Feed inline comment editor와 useFeedQaComments는 제거되었다.
+4. 댓글 QA는 RouteDetail의 Route Comments 영역에서 수행한다.
+5. Route History QA는 RouteDetail의 View History 버튼에서 진입한다.
+6. 아래 2026-06-04 Feed QA 설명은 과거 기록으로만 본다.
+```
+## 2026-06-08 TASK-015 Profile 진행
+
+Profile QA 기준:
+
+```text
+RouteFeed
+-> Profile
+-> ProfileScreen
+-> user basic info
+-> summary placeholder
+-> My Routes / Bookmarks buttons
+```
+
+주의:
+
+```text
+1. useProfile에서는 useAuth 구독을 사용하지 않는다.
+2. Profile 조회 시 authService.getSession()을 1회 호출한다.
+3. GET /api/v1/users/me 호출은 userService.getMe를 통해서만 수행한다.
+4. profile 수정, 이미지 업로드, 로그아웃, chart/statistics 기능은 TASK-015 범위 밖이다.
+```
+## 2026-06-08 TASK-016 My Routes 진행
+
+My Routes QA 기준:
+
+```text
+RouteFeed
+-> Profile
+-> My Routes
+-> MyRoutesScreen
+-> RouteCard / Open Detail
+-> RouteDetail
+```
+
+구현 기준:
+
+```text
+1. GET /api/v1/routes/me endpoint를 추가했다.
+2. /routes/me는 /routes/{route_id}보다 먼저 선언한다.
+3. My Routes API 호출은 routeService.getMyRoutes에서만 수행한다.
+4. useMyRoutes에서는 useAuth 구독을 사용하지 않는다.
+5. My Routes 조회 시 authService.getSession()을 1회 호출한다.
+6. Route 수정/삭제/검색/cluster/history 기능은 TASK-016 범위 밖이다.
+```

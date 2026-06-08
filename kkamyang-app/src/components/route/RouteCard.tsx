@@ -33,7 +33,11 @@ export function RouteCard({ onPress, route }: RouteCardProps) {
   const visibility = "visibility" in route ? route.visibility : null;
 
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable
+      accessibilityRole={onPress ? "button" : undefined}
+      onPress={onPress}
+      style={styles.container}
+    >
       <Text style={styles.title}>{route.title}</Text>
       {description ? <Text style={styles.description}>{description}</Text> : null}
       <Text>
@@ -51,6 +55,11 @@ export function RouteCard({ onPress, route }: RouteCardProps) {
           {bookmarkCount}
         </Text>
       ) : null}
+      {onPress ? (
+        <View style={styles.detailButton}>
+          <Text style={styles.detailButtonText}>Open Detail</Text>
+        </View>
+      ) : null}
     </Pressable>
   );
 }
@@ -64,6 +73,22 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 4,
+  },
+  detailButton: {
+    alignItems: "center",
+    alignSelf: "flex-start",
+    backgroundColor: "#111827",
+    borderRadius: 8,
+    justifyContent: "center",
+    marginTop: 8,
+    minHeight: 40,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  detailButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
   title: {
     fontSize: 16,

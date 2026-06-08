@@ -21,6 +21,15 @@ class RouteService:
             "has_next": len(rows) > size,
         }
 
+    def get_my_routes(self, page: int, size: int, user_id: str):
+        rows = self.route_repository.list_my_routes(page, size, user_id)
+        return {
+            "items": rows[:size],
+            "page": page,
+            "size": size,
+            "has_next": len(rows) > size,
+        }
+
     def get_detail(self, route_id: int, viewer_user_id: str | None = None):
         route = self.route_repository.get_route_detail(route_id)
 

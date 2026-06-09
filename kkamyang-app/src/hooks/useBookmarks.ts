@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { bookmarkService } from "../services/bookmarkService";
+import { authService } from "../services/authService";
 import type { BookmarkRouteItem } from "../types/route";
-import { useAuth } from "./useAuth";
 
 const BOOKMARK_PAGE_SIZE = 20;
 
 export function useBookmarks() {
-  const { session } = useAuth();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasNext, setHasNext] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +16,8 @@ export function useBookmarks() {
 
   const loadPage = useCallback(
     async (nextPage: number, replace = false) => {
+      const session = await authService.getSession();
+
       if (!session) {
         setItems([]);
         setErrorMessage("AUTH_REQUIRED");
@@ -54,7 +55,7 @@ export function useBookmarks() {
         setIsRefreshing(false);
       }
     },
-    [session],
+    [],
   );
 
   const refresh = useCallback(async () => {

@@ -4,7 +4,7 @@ from urllib.parse import parse_qs, urlsplit
 
 import repositories.route_repository as route_repository_module
 from app.config import Settings
-from repositories.route_repository import RouteRepository
+from repositories.route_repository import RouteRepository, SupabaseRequestError
 from utils.response import ApiError
 
 
@@ -145,6 +145,179 @@ def test_route_repository_queries_my_routes_by_owner():
             "created_at": "2026-05-19T10:00:00Z",
         }
     ]
+
+
+def test_route_repository_queries_bookmarked_routes_by_owner():
+    repository = CapturingRouteRepository(
+        [
+            {
+                "routes": {
+                    "route_id": 10,
+                    "title": "Morning run",
+                    "activity_type": "RUN",
+                    "encoded_polyline": "xxxxx",
+                    "distance_km": "5.210",
+                    "created_at": "2026-05-19T10:00:00Z",
+                }
+            }
+        ]
+    )
+
+    result = repository.list_bookmarked_routes(
+        page=2,
+        size=20,
+        user_id="00000000-0000-0000-0000-000000000001",
+    )
+
+    query = parse_qs(urlsplit(repository.request["path"]).query)
+    assert repository.request["method"] == "GET"
+    assert "/rest/v1/route_bookmarks?" in repository.request["path"]
+    assert query["user_id"] == ["eq.00000000-0000-0000-0000-000000000001"]
+    assert query["deleted_yn"] == ["eq.N"]
+    assert query["routes.deleted_yn"] == ["eq.N"]
+    assert query["order"] == ["created_at.desc"]
+    assert query["offset"] == ["20"]
+    assert query["limit"] == ["21"]
+    assert "routes!inner(" in query["select"][0]
+    assert result == [
+        {
+            "route_id": 10,
+            "title": "Morning run",
+            "activity_type": "RUN",
+            "encoded_polyline": "xxxxx",
+            "distance_km": 5.21,
+            "created_at": "2026-05-19T10:00:00Z",
+        }
+    ]
+
+
+def test_route_repository_queries_similar_routes_from_existing_cluster():
+    repository = ScriptedRouteRepository(
+        [
+            [{"route_cluster_id": 1}],
+            [
+                {
+                    "route_id": 11,
+                    "title": "Evening run",
+                    "distance_km": "5.400",
+                }
+            ],
+        ]
+    )
+
+    result = repository.list_similar_routes(route_id=10)
+
+    first_query = parse_qs(urlsplit(repository.requests[0]["path"]).query)
+    second_query = parse_qs(urlsplit(repository.requests[1]["path"]).query)
+    assert repository.requests[0]["method"] == "GET"
+    assert first_query["route_id"] == ["eq.10"]
+    assert first_query["deleted_yn"] == ["eq.N"]
+    assert first_query["select"] == ["route_cluster_id"]
+    assert first_query["limit"] == ["1"]
+    assert repository.requests[1]["method"] == "GET"
+    assert second_query["route_cluster_id"] == ["eq.1"]
+    assert second_query["route_id"] == ["neq.10"]
+    assert second_query["deleted_yn"] == ["eq.N"]
+    assert second_query["order"] == ["created_at.desc"]
+    assert result == {
+        "cluster_id": 1,
+        "items": [
+            {
+                "route_id": 11,
+                "title": "Evening run",
+                "distance_km": 5.4,
+                "similarity_score": 100,
+            }
+        ],
+    }
+
+
+def test_route_repository_returns_empty_similar_routes_without_cluster():
+    repository = ScriptedRouteRepository([[{"route_cluster_id": None}]])
+
+    result = repository.list_similar_routes(route_id=10)
+
+    assert len(repository.requests) == 1
+    assert result == {
+        "cluster_id": None,
+        "items": [],
+    }
+
+
+def test_route_repository_returns_empty_similar_routes_when_cluster_column_missing():
+    class MissingClusterColumnRepository(RouteRepository):
+        def __init__(self):
+            super().__init__(SETTINGS)
+
+        def _request(self, method, path, body=None, extra_headers=None):
+            raise SupabaseRequestError(
+                message="Supabase database request failed",
+                postgrest_code="PGRST204",
+            )
+
+    result = MissingClusterColumnRepository().list_similar_routes(route_id=10)
+
+    assert result == {
+        "cluster_id": None,
+        "items": [],
+    }
+
+
+def test_route_repository_queries_route_history_by_finished_activity():
+    repository = CapturingRouteRepository(
+        [
+            {
+                "activity_id": 1,
+                "route_id": 10,
+                "distance_km": "5.210",
+                "duration_sec": 1830,
+                "started_at": "2026-05-19T10:00:00Z",
+                "ended_at": "2026-05-19T10:30:30Z",
+            }
+        ]
+    )
+
+    result = repository.list_route_history(route_id=10, page=2, size=20)
+
+    query = parse_qs(urlsplit(repository.request["path"]).query)
+    assert repository.request["method"] == "GET"
+    assert "/rest/v1/activities?" in repository.request["path"]
+    assert query["route_id"] == ["eq.10"]
+    assert query["status"] == ["eq.FINISHED"]
+    assert query["deleted_yn"] == ["eq.N"]
+    assert query["order"] == ["started_at.desc"]
+    assert query["offset"] == ["20"]
+    assert query["limit"] == ["21"]
+    assert result == [
+        {
+            "activity_id": 1,
+            "route_id": 10,
+            "distance_km": 5.21,
+            "duration_sec": 1830,
+            "started_at": "2026-05-19T10:00:00Z",
+            "ended_at": "2026-05-19T10:30:30Z",
+        }
+    ]
+
+
+def test_route_repository_returns_empty_history_when_activities_table_missing():
+    class MissingActivitiesTableRepository(RouteRepository):
+        def __init__(self):
+            super().__init__(SETTINGS)
+
+        def _request(self, method, path, body=None, extra_headers=None):
+            raise SupabaseRequestError(
+                message="Supabase database request failed",
+                postgrest_code="PGRST205",
+            )
+
+    result = MissingActivitiesTableRepository().list_route_history(
+        route_id=10,
+        page=1,
+        size=20,
+    )
+
+    assert result == []
 
 
 def test_route_repository_rejects_route_without_embedded_user():

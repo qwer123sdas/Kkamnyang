@@ -57,6 +57,36 @@ def get_my_routes(
     )
 
 
+@router.get("/bookmarks/me")
+def get_bookmarks(
+    page: int = Query(ge=1),
+    size: int = Query(ge=1, le=50),
+    auth_user: AuthUser = Depends(get_current_auth_user),
+    route_service: RouteService = Depends(get_route_service),
+):
+    return success_response(
+        route_service.get_bookmarks(page, size, auth_user.user_id),
+    )
+
+
+@router.get("/routes/{route_id}/similar")
+def get_similar_routes(
+    route_id: int,
+    route_service: RouteService = Depends(get_route_service),
+):
+    return success_response(route_service.get_similar_routes(route_id))
+
+
+@router.get("/routes/{route_id}/history")
+def get_route_history(
+    route_id: int,
+    page: int = Query(ge=1),
+    size: int = Query(ge=1, le=50),
+    route_service: RouteService = Depends(get_route_service),
+):
+    return success_response(route_service.get_route_history(route_id, page, size))
+
+
 @router.get("/routes/{route_id}")
 def get_route_detail(
     route_id: int,

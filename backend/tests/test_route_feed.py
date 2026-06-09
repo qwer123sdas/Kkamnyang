@@ -60,6 +60,26 @@ class FakeRouteService:
             "has_next": False,
         }
 
+    def get_bookmarks(self, page: int, size: int, user_id: str):
+        assert page == 1
+        assert size == 20
+        assert user_id == "00000000-0000-0000-0000-000000000001"
+        return {
+            "items": [
+                {
+                    "route_id": 10,
+                    "title": "Morning run",
+                    "activity_type": "RUN",
+                    "encoded_polyline": "xxxxx",
+                    "distance_km": 5.21,
+                    "created_at": "2026-05-19T10:00:00Z",
+                }
+            ],
+            "page": page,
+            "size": size,
+            "has_next": False,
+        }
+
     def get_detail(self, route_id: int, viewer_user_id: str | None = None):
         assert route_id == 10
         return {
@@ -140,6 +160,40 @@ class FakeRouteService:
                         "nickname": "?щ꼫",
                     },
                 },
+            ],
+            "page": page,
+            "size": size,
+            "has_next": False,
+        }
+
+    def get_similar_routes(self, route_id: int):
+        assert route_id == 10
+        return {
+            "cluster_id": 1,
+            "items": [
+                {
+                    "route_id": 11,
+                    "title": "Evening run",
+                    "distance_km": 5.4,
+                    "similarity_score": 100,
+                }
+            ],
+        }
+
+    def get_route_history(self, route_id: int, page: int, size: int):
+        assert route_id == 10
+        assert page == 1
+        assert size == 20
+        return {
+            "items": [
+                {
+                    "activity_id": 1,
+                    "route_id": 10,
+                    "distance_km": 5.21,
+                    "duration_sec": 1830,
+                    "started_at": "2026-05-19T10:00:00Z",
+                    "ended_at": "2026-05-19T10:30:30Z",
+                }
             ],
             "page": page,
             "size": size,
@@ -253,6 +307,36 @@ def test_my_routes_requires_authentication_and_returns_paginated_routes():
                     "encoded_polyline": "xxxxx",
                     "distance_km": 5.21,
                     "duration_sec": 1830,
+                    "created_at": "2026-05-19T10:00:00Z",
+                }
+            ],
+            "page": 1,
+            "size": 20,
+            "has_next": False,
+        },
+        "message": None,
+    }
+    app.dependency_overrides.clear()
+
+
+def test_bookmarks_requires_authentication_and_returns_paginated_routes():
+    app.dependency_overrides[get_route_service] = override_route_service
+    app.dependency_overrides[get_current_auth_user] = override_current_auth_user
+    client = TestClient(app)
+
+    response = client.get("/api/v1/bookmarks/me?page=1&size=20")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "success": True,
+        "data": {
+            "items": [
+                {
+                    "route_id": 10,
+                    "title": "Morning run",
+                    "activity_type": "RUN",
+                    "encoded_polyline": "xxxxx",
+                    "distance_km": 5.21,
                     "created_at": "2026-05-19T10:00:00Z",
                 }
             ],
@@ -423,6 +507,60 @@ def test_route_comments_returns_paginated_comments():
     app.dependency_overrides.clear()
 
 
+def test_route_similar_returns_cluster_routes():
+    app.dependency_overrides[get_route_service] = override_route_service
+    client = TestClient(app)
+
+    response = client.get("/api/v1/routes/10/similar")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "success": True,
+        "data": {
+            "cluster_id": 1,
+            "items": [
+                {
+                    "route_id": 11,
+                    "title": "Evening run",
+                    "distance_km": 5.4,
+                    "similarity_score": 100,
+                }
+            ],
+        },
+        "message": None,
+    }
+    app.dependency_overrides.clear()
+
+
+def test_route_history_returns_paginated_activities():
+    app.dependency_overrides[get_route_service] = override_route_service
+    client = TestClient(app)
+
+    response = client.get("/api/v1/routes/10/history?page=1&size=20")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "success": True,
+        "data": {
+            "items": [
+                {
+                    "activity_id": 1,
+                    "route_id": 10,
+                    "distance_km": 5.21,
+                    "duration_sec": 1830,
+                    "started_at": "2026-05-19T10:00:00Z",
+                    "ended_at": "2026-05-19T10:30:30Z",
+                }
+            ],
+            "page": 1,
+            "size": 20,
+            "has_next": False,
+        },
+        "message": None,
+    }
+    app.dependency_overrides.clear()
+
+
 def test_route_comment_create_requires_authentication():
     client = TestClient(app)
 
@@ -562,6 +700,31 @@ class FakeRouteRepository:
         }
         return self.rows
 
+    def list_similar_routes(self, route_id: int):
+        self.request = {
+            "route_id": route_id,
+        }
+        return {
+            "cluster_id": 1,
+            "items": self.rows,
+        }
+
+    def list_route_history(self, route_id: int, page: int, size: int):
+        self.request = {
+            "route_id": route_id,
+            "page": page,
+            "size": size,
+        }
+        return self.rows
+
+    def list_bookmarked_routes(self, page: int, size: int, user_id: str):
+        self.request = {
+            "page": page,
+            "size": size,
+            "user_id": user_id,
+        }
+        return self.rows
+
     def create_route_comment(
         self,
         route_id: int,
@@ -630,6 +793,28 @@ def test_route_service_returns_empty_page_without_next_page():
         "page": 1,
         "size": 20,
         "has_next": False,
+    }
+
+
+def test_route_service_returns_paginated_bookmarks():
+    repository = FakeRouteRepository([{"route_id": 3}, {"route_id": 2}, {"route_id": 1}])
+
+    result = RouteService(repository).get_bookmarks(
+        page=2,
+        size=2,
+        user_id="00000000-0000-0000-0000-000000000001",
+    )
+
+    assert repository.request == {
+        "page": 2,
+        "size": 2,
+        "user_id": "00000000-0000-0000-0000-000000000001",
+    }
+    assert result == {
+        "items": [{"route_id": 3}, {"route_id": 2}],
+        "page": 2,
+        "size": 2,
+        "has_next": True,
     }
 
 
@@ -713,6 +898,52 @@ def test_route_service_returns_paginated_comments():
         "items": [{"comment_id": 2}],
         "page": 1,
         "size": 1,
+        "has_next": True,
+    }
+
+
+def test_route_service_returns_similar_routes():
+    route = {
+        "route_id": 10,
+        "visibility": "PUBLIC",
+        "user": {
+            "user_id": "00000000-0000-0000-0000-000000000001",
+        },
+    }
+    repository = FakeRouteRepository([{"route_id": 11}])
+    repository.get_route_detail = lambda route_id: route
+
+    result = RouteService(repository).get_similar_routes(route_id=10)
+
+    assert repository.request == {"route_id": 10}
+    assert result == {
+        "cluster_id": 1,
+        "items": [{"route_id": 11}],
+    }
+
+
+def test_route_service_returns_paginated_route_history():
+    route = {
+        "route_id": 10,
+        "visibility": "PUBLIC",
+        "user": {
+            "user_id": "00000000-0000-0000-0000-000000000001",
+        },
+    }
+    repository = FakeRouteRepository([{"activity_id": 3}, {"activity_id": 2}, {"activity_id": 1}])
+    repository.get_route_detail = lambda route_id: route
+
+    result = RouteService(repository).get_route_history(route_id=10, page=2, size=2)
+
+    assert repository.request == {
+        "route_id": 10,
+        "page": 2,
+        "size": 2,
+    }
+    assert result == {
+        "items": [{"activity_id": 3}, {"activity_id": 2}],
+        "page": 2,
+        "size": 2,
         "has_next": True,
     }
 

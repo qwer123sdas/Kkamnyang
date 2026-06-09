@@ -30,6 +30,15 @@ class RouteService:
             "has_next": len(rows) > size,
         }
 
+    def get_bookmarks(self, page: int, size: int, user_id: str):
+        rows = self.route_repository.list_bookmarked_routes(page, size, user_id)
+        return {
+            "items": rows[:size],
+            "page": page,
+            "size": size,
+            "has_next": len(rows) > size,
+        }
+
     def get_detail(self, route_id: int, viewer_user_id: str | None = None):
         route = self.route_repository.get_route_detail(route_id)
 
@@ -122,6 +131,21 @@ class RouteService:
     def get_comments(self, route_id: int, page: int, size: int):
         self.get_detail(route_id)
         rows = self.route_repository.list_route_comments(route_id, page, size)
+
+        return {
+            "items": rows[:size],
+            "page": page,
+            "size": size,
+            "has_next": len(rows) > size,
+        }
+
+    def get_similar_routes(self, route_id: int):
+        self.get_detail(route_id)
+        return self.route_repository.list_similar_routes(route_id)
+
+    def get_route_history(self, route_id: int, page: int, size: int):
+        self.get_detail(route_id)
+        rows = self.route_repository.list_route_history(route_id, page, size)
 
         return {
             "items": rows[:size],

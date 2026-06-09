@@ -13,18 +13,21 @@ export default function RouteClusterScreen() {
   const params = route.params as RouteClusterParams | undefined;
   const routeId = params?.routeId ?? null;
   const { cluster, errorMessage, isLoading } = useRouteCluster(routeId);
+  const isEmpty = Boolean(routeId) && !isLoading && !errorMessage && !cluster;
 
   return (
     <View>
       <Text>Route Cluster Screen</Text>
       {isLoading ? <Text>Loading similar routes</Text> : null}
       {errorMessage ? <Text>{errorMessage}</Text> : null}
+      {!routeId ? <Text>Route ID is required.</Text> : null}
       {cluster ? (
         <RouteClusterList
           clusterId={cluster.cluster_id}
           routes={cluster.items}
         />
       ) : null}
+      {isEmpty ? <Text>Similar routes are not available.</Text> : null}
     </View>
   );
 }

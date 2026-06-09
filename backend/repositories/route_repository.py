@@ -24,8 +24,20 @@ MY_ROUTE_SELECT = (
     "route_id,title,activity_type,visibility,encoded_polyline,"
     "distance_km,duration_sec,created_at"
 )
+BOOKMARK_ROUTE_SELECT = (
+    "routes!inner(route_id,title,activity_type,encoded_polyline,distance_km,created_at)"
+)
+SIMILAR_ROUTE_SELECT = "route_id,title,distance_km"
+ROUTE_HISTORY_SELECT = "activity_id,route_id,distance_km,duration_sec,started_at,ended_at"
 COMMENT_SELECT = "comment_id,content,created_at,users!inner(user_id,login_id,nickname)"
+MISSING_SCHEMA_POSTGREST_CODES = {"PGRST204", "PGRST205"}
 logger = logging.getLogger(__name__)
+
+
+class SupabaseRequestError(ApiError):
+    def __init__(self, message: str, postgrest_code: str):
+        super().__init__(500, message, "INTERNAL_ERROR")
+        self.postgrest_code = postgrest_code
 
 
 class RouteRepository:
@@ -105,6 +117,30 @@ class RouteRepository:
 
         return [self._to_my_route_response(row) for row in payload]
 
+    def list_bookmarked_routes(self, page: int, size: int, user_id: str):
+        payload = self._request(
+            method="GET",
+            path=(
+                "/rest/v1/route_bookmarks?"
+                + urlencode(
+                    {
+                        "user_id": f"eq.{user_id}",
+                        "deleted_yn": "eq.N",
+                        "routes.deleted_yn": "eq.N",
+                        "select": BOOKMARK_ROUTE_SELECT,
+                        "order": "created_at.desc",
+                        "offset": (page - 1) * size,
+                        "limit": size + 1,
+                    }
+                )
+            ),
+        )
+
+        if not isinstance(payload, list):
+            raise ApiError(500, "Invalid bookmarks response", "INTERNAL_ERROR")
+
+        return [self._to_bookmark_route_response(row) for row in payload]
+
     def set_route_liked(
         self,
         route_id: int,
@@ -166,6 +202,102 @@ class RouteRepository:
             raise ApiError(500, "Invalid comments response", "INTERNAL_ERROR")
 
         return [self._to_comment_response(row) for row in payload]
+
+    def list_similar_routes(self, route_id: int) -> dict[str, Any]:
+        try:
+            route_payload = self._request(
+                method="GET",
+                path=(
+                    "/rest/v1/routes?"
+                    + urlencode(
+                        {
+                            "route_id": f"eq.{route_id}",
+                            "deleted_yn": "eq.N",
+                            "select": "route_cluster_id",
+                            "limit": 1,
+                        }
+                    )
+                ),
+            )
+        except SupabaseRequestError as error:
+            if self._is_missing_schema_error(error):
+                return {
+                    "cluster_id": None,
+                    "items": [],
+                }
+            raise
+
+        if not isinstance(route_payload, list):
+            raise ApiError(500, "Invalid route cluster response", "INTERNAL_ERROR")
+
+        cluster_id = route_payload[0].get("route_cluster_id") if route_payload else None
+
+        if not cluster_id:
+            return {
+                "cluster_id": None,
+                "items": [],
+            }
+
+        try:
+            payload = self._request(
+                method="GET",
+                path=(
+                    "/rest/v1/routes?"
+                    + urlencode(
+                        {
+                            "route_cluster_id": f"eq.{cluster_id}",
+                            "route_id": f"neq.{route_id}",
+                            "deleted_yn": "eq.N",
+                            "select": SIMILAR_ROUTE_SELECT,
+                            "order": "created_at.desc",
+                        }
+                    )
+                ),
+            )
+        except SupabaseRequestError as error:
+            if self._is_missing_schema_error(error):
+                return {
+                    "cluster_id": cluster_id,
+                    "items": [],
+                }
+            raise
+
+        if not isinstance(payload, list):
+            raise ApiError(500, "Invalid similar routes response", "INTERNAL_ERROR")
+
+        return {
+            "cluster_id": cluster_id,
+            "items": [self._to_similar_route_response(row) for row in payload],
+        }
+
+    def list_route_history(self, route_id: int, page: int, size: int):
+        try:
+            payload = self._request(
+                method="GET",
+                path=(
+                    "/rest/v1/activities?"
+                    + urlencode(
+                        {
+                            "route_id": f"eq.{route_id}",
+                            "status": "eq.FINISHED",
+                            "deleted_yn": "eq.N",
+                            "select": ROUTE_HISTORY_SELECT,
+                            "order": "started_at.desc",
+                            "offset": (page - 1) * size,
+                            "limit": size + 1,
+                        }
+                    )
+                ),
+            )
+        except SupabaseRequestError as error:
+            if self._is_missing_schema_error(error):
+                return []
+            raise
+
+        if not isinstance(payload, list):
+            raise ApiError(500, "Invalid route history response", "INTERNAL_ERROR")
+
+        return [self._to_route_history_response(row) for row in payload]
 
     def create_route_comment(
         self,
@@ -335,11 +467,17 @@ class RouteRepository:
                 error.code,
                 postgrest_code,
             )
-            raise ApiError(500, "Supabase database request failed", "INTERNAL_ERROR")
+            raise SupabaseRequestError(
+                "Supabase database request failed",
+                postgrest_code,
+            )
         except (URLError, TimeoutError):
             raise ApiError(500, "Supabase database request failed", "INTERNAL_ERROR")
 
         return json.loads(raw) if raw else None
+
+    def _is_missing_schema_error(self, error: SupabaseRequestError) -> bool:
+        return error.postgrest_code in MISSING_SCHEMA_POSTGREST_CODES
 
     def _to_route_response(self, row: dict[str, Any]) -> dict[str, Any]:
         user = row.get("users")
@@ -402,6 +540,27 @@ class RouteRepository:
             "created_at": row.get("created_at"),
         }
 
+    def _to_bookmark_route_response(self, row: dict[str, Any]) -> dict[str, Any]:
+        route = row.get("routes")
+
+        if not isinstance(route, dict):
+            raise ApiError(500, "Invalid bookmarks response", "INTERNAL_ERROR")
+
+        distance_km = route.get("distance_km")
+        try:
+            normalized_distance_km = float(distance_km) if distance_km is not None else None
+        except (TypeError, ValueError):
+            raise ApiError(500, "Invalid bookmarks response", "INTERNAL_ERROR")
+
+        return {
+            "route_id": route.get("route_id"),
+            "title": route.get("title"),
+            "activity_type": route.get("activity_type"),
+            "encoded_polyline": route.get("encoded_polyline"),
+            "distance_km": normalized_distance_km,
+            "created_at": route.get("created_at"),
+        }
+
     def _to_comment_response(self, row: dict[str, Any]) -> dict[str, Any]:
         user = row.get("users")
 
@@ -417,6 +576,36 @@ class RouteRepository:
                 "login_id": user.get("login_id"),
                 "nickname": user.get("nickname"),
             },
+        }
+
+    def _to_similar_route_response(self, row: dict[str, Any]) -> dict[str, Any]:
+        distance_km = row.get("distance_km")
+        try:
+            normalized_distance_km = float(distance_km) if distance_km is not None else None
+        except (TypeError, ValueError):
+            raise ApiError(500, "Invalid similar routes response", "INTERNAL_ERROR")
+
+        return {
+            "route_id": row.get("route_id"),
+            "title": row.get("title"),
+            "distance_km": normalized_distance_km,
+            "similarity_score": 100,
+        }
+
+    def _to_route_history_response(self, row: dict[str, Any]) -> dict[str, Any]:
+        distance_km = row.get("distance_km")
+        try:
+            normalized_distance_km = float(distance_km) if distance_km is not None else None
+        except (TypeError, ValueError):
+            raise ApiError(500, "Invalid route history response", "INTERNAL_ERROR")
+
+        return {
+            "activity_id": row.get("activity_id"),
+            "route_id": row.get("route_id"),
+            "distance_km": normalized_distance_km,
+            "duration_sec": row.get("duration_sec"),
+            "started_at": row.get("started_at"),
+            "ended_at": row.get("ended_at"),
         }
 
     def _get_route_action(self, table: str, route_id: int, user_id: str):

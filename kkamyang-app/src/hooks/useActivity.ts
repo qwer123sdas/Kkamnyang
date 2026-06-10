@@ -1,27 +1,43 @@
 import { useCallback, useState } from "react";
 
 import { activityService } from "../services/activityService";
+import { authService } from "../services/authService";
 import type { Activity, ActivityFinishRequest } from "../types/activity";
 import type { RecordedGeoPoint } from "../types/geo";
 import { calculateTotalDistanceKm } from "../utils/distance";
 import { calculateDurationSec } from "../utils/gps";
 import { createRouteGeoJson, encodePolyline } from "../utils/polyline";
-import { useAuth } from "./useAuth";
 
 const DEFAULT_FINISH_TITLE = "RUN Record";
 const DEFAULT_FINISH_DESCRIPTION = "";
 const DEFAULT_FINISH_VISIBILITY = "PUBLIC";
 
+function createStationaryEndPoint(point: RecordedGeoPoint): RecordedGeoPoint {
+  return {
+    ...point,
+    recorded_at: new Date().toISOString(),
+  };
+}
+
+function normalizeFinishPoints(points: RecordedGeoPoint[]) {
+  if (points.length !== 1) {
+    return points;
+  }
+
+  return [points[0], createStationaryEndPoint(points[0])];
+}
+
 function createFinishRequest(points: RecordedGeoPoint[]): ActivityFinishRequest {
-  const startPoint = points[0];
-  const endPoint = points[points.length - 1];
+  const finishPoints = normalizeFinishPoints(points);
+  const startPoint = finishPoints[0];
+  const endPoint = finishPoints[finishPoints.length - 1];
 
   return {
     title: DEFAULT_FINISH_TITLE,
     description: DEFAULT_FINISH_DESCRIPTION,
     visibility: DEFAULT_FINISH_VISIBILITY,
-    encoded_polyline: encodePolyline(points),
-    route_geojson: createRouteGeoJson(points),
+    encoded_polyline: encodePolyline(finishPoints),
+    route_geojson: createRouteGeoJson(finishPoints),
     start_point: {
       lat: startPoint.latitude,
       lng: startPoint.longitude,
@@ -30,19 +46,20 @@ function createFinishRequest(points: RecordedGeoPoint[]): ActivityFinishRequest 
       lat: endPoint.latitude,
       lng: endPoint.longitude,
     },
-    distance_km: calculateTotalDistanceKm(points),
-    duration_sec: calculateDurationSec(points),
+    distance_km: calculateTotalDistanceKm(finishPoints),
+    duration_sec: calculateDurationSec(finishPoints),
   };
 }
 
 export function useActivity() {
-  const { session } = useAuth();
   const [activity, setActivity] = useState<Activity | null>(null);
   const [isFinishing, setIsFinishing] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const start = useCallback(async () => {
+    const session = await authService.getSession();
+
     if (!session) {
       setErrorMessage("AUTH_REQUIRED");
       return null;
@@ -63,10 +80,12 @@ export function useActivity() {
     } finally {
       setIsStarting(false);
     }
-  }, [session]);
+  }, []);
 
   const finish = useCallback(
     async (points: RecordedGeoPoint[]) => {
+      const session = await authService.getSession();
+
       if (!session) {
         setErrorMessage("AUTH_REQUIRED");
         return;
@@ -77,8 +96,8 @@ export function useActivity() {
         return;
       }
 
-      if (points.length < 2) {
-        setErrorMessage("GPS_POINTS_REQUIRED");
+      if (points.length < 1) {
+        setErrorMessage("GPS point is required before finishing.");
         return;
       }
 
@@ -94,6 +113,7 @@ export function useActivity() {
 
         setActivity({
           ...activity,
+          ended_at: new Date().toISOString(),
           route_id: finishedActivity.route_id,
           status: finishedActivity.status,
         });
@@ -105,7 +125,7 @@ export function useActivity() {
         setIsFinishing(false);
       }
     },
-    [activity, session],
+    [activity],
   );
 
   return {

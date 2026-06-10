@@ -30,6 +30,7 @@ BOOKMARK_ROUTE_SELECT = (
 SIMILAR_ROUTE_SELECT = "route_id,title,distance_km"
 ROUTE_HISTORY_SELECT = "activity_id,route_id,distance_km,duration_sec,started_at,ended_at"
 COMMENT_SELECT = "comment_id,content,created_at,users!inner(user_id,login_id,nickname)"
+ACTIVITY_SELECT = "activity_id,activity_type,status,started_at,ended_at,route_id"
 MISSING_SCHEMA_POSTGREST_CODES = {"PGRST204", "PGRST205"}
 logger = logging.getLogger(__name__)
 
@@ -298,6 +299,122 @@ class RouteRepository:
             raise ApiError(500, "Invalid route history response", "INTERNAL_ERROR")
 
         return [self._to_route_history_response(row) for row in payload]
+
+    def create_activity(
+        self,
+        user_id: str,
+        activity_type: str,
+        actor: str,
+    ) -> dict[str, Any]:
+        payload = self._request(
+            method="POST",
+            path="/rest/v1/activities",
+            body={
+                "user_id": user_id,
+                "activity_type": activity_type,
+                "started_at": datetime.now(timezone.utc).isoformat(),
+                "status": "STARTED",
+                "created_by": actor,
+                "updated_by": actor,
+                "deleted_yn": "N",
+            },
+            extra_headers={"Prefer": "return=representation"},
+        )
+
+        if not isinstance(payload, list) or not payload:
+            raise ApiError(500, "Invalid created activity response", "INTERNAL_ERROR")
+
+        return self._to_activity_response(payload[0])
+
+    def get_active_activity(self, activity_id: int, user_id: str):
+        payload = self._request(
+            method="GET",
+            path=(
+                "/rest/v1/activities?"
+                + urlencode(
+                    {
+                        "activity_id": f"eq.{activity_id}",
+                        "user_id": f"eq.{user_id}",
+                        "status": "eq.STARTED",
+                        "deleted_yn": "eq.N",
+                        "select": "activity_id",
+                        "limit": 1,
+                    }
+                )
+            ),
+        )
+
+        if not isinstance(payload, list):
+            raise ApiError(500, "Invalid activity response", "INTERNAL_ERROR")
+
+        return payload[0] if payload else None
+
+    def finish_activity(
+        self,
+        activity_id: int,
+        user_id: str,
+        body: dict[str, Any],
+        actor: str,
+    ) -> dict[str, Any]:
+        route_payload = self._request(
+            method="POST",
+            path="/rest/v1/routes",
+            body={
+                "user_id": user_id,
+                "title": body["title"],
+                "description": body["description"],
+                "activity_type": "RUN",
+                "visibility": body["visibility"],
+                "encoded_polyline": body["encoded_polyline"],
+                "route_geojson": body["route_geojson"],
+                "start_point": self._to_geography_point(body["start_point"]),
+                "end_point": self._to_geography_point(body["end_point"]),
+                "distance_km": body["distance_km"],
+                "duration_sec": body["duration_sec"],
+                "created_by": actor,
+                "updated_by": actor,
+                "deleted_yn": "N",
+            },
+            extra_headers={"Prefer": "return=representation"},
+        )
+
+        if not isinstance(route_payload, list) or not route_payload:
+            raise ApiError(500, "Invalid created route response", "INTERNAL_ERROR")
+
+        route_id = route_payload[0].get("route_id")
+        activity_payload = self._request(
+            method="PATCH",
+            path=(
+                "/rest/v1/activities?"
+                + urlencode(
+                    {
+                        "activity_id": f"eq.{activity_id}",
+                        "user_id": f"eq.{user_id}",
+                        "status": "eq.STARTED",
+                        "deleted_yn": "eq.N",
+                    }
+                )
+            ),
+            body={
+                "route_id": route_id,
+                "ended_at": datetime.now(timezone.utc).isoformat(),
+                "distance_km": body["distance_km"],
+                "duration_sec": body["duration_sec"],
+                "status": "FINISHED",
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "updated_by": actor,
+            },
+            extra_headers={"Prefer": "return=representation"},
+        )
+
+        if not isinstance(activity_payload, list) or not activity_payload:
+            raise ApiError(500, "Invalid finished activity response", "INTERNAL_ERROR")
+
+        return {
+            "activity_id": activity_payload[0].get("activity_id"),
+            "route_id": route_id,
+            "status": activity_payload[0].get("status"),
+        }
 
     def create_route_comment(
         self,
@@ -607,6 +724,19 @@ class RouteRepository:
             "started_at": row.get("started_at"),
             "ended_at": row.get("ended_at"),
         }
+
+    def _to_activity_response(self, row: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "activity_id": row.get("activity_id"),
+            "activity_type": row.get("activity_type"),
+            "status": row.get("status"),
+            "started_at": row.get("started_at"),
+            "ended_at": row.get("ended_at"),
+            "route_id": row.get("route_id"),
+        }
+
+    def _to_geography_point(self, point: dict[str, Any]) -> str:
+        return f"POINT({point['lng']} {point['lat']})"
 
     def _get_route_action(self, table: str, route_id: int, user_id: str):
         payload = self._request(

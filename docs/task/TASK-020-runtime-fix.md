@@ -1,5 +1,107 @@
 # TASK-020-runtime-fix
 
+## 2026-06-10 Progress
+
+### Confirmed Before Change
+
+```text
+1. src/config/env.ts already uses empty-string fallbacks for EXPO_PUBLIC_* values.
+2. src/config/supabase.ts already avoids createClient when Supabase URL/key are missing.
+3. LoginScreen already displays a Google login button.
+4. RouteFeedScreen already connects RouteCard press to RouteDetail.
+5. RouteFeedScreen already has Record/Profile entry buttons.
+6. MainNavigator already registers RouteDetail, Record, and Profile screens.
+```
+
+### Minimal Fix
+
+```text
+1. useAuth.signInWithGoogle now catches login errors.
+2. Login errors are written to existing auth errorMessage state.
+3. LoginScreen can display SUPABASE_NOT_CONFIGURED instead of leaving an unhandled button action.
+4. RunningMap now skips MapView rendering when Google Maps API key is missing.
+5. RecordScreen can render a non-map fallback instead of failing at map entry.
+6. useActivity no longer subscribes to useAuth on RecordScreen mount.
+7. useActivity now calls authService.getSession() only at start/finish action points.
+8. Backend POST /api/v1/activities/start endpoint added.
+9. Backend POST /api/v1/activities/{activity_id}/finish endpoint added.
+10. RecordScreen now has a Find Current Location action.
+11. Finish Record is enabled with at least 1 GPS point.
+12. Single-point finish duplicates the first point as a stationary end point.
+```
+
+### Verification
+
+```text
+1. TypeScript 오류 없음: passed
+2. Screen direct fetch 없음: fetch only in src/services/apiClient.ts
+3. Detail/Profile/MyRoutes/Bookmarks/Activity hooks useAuth 구독 없음: passed
+4. Metro status: packager-status:running on 8081
+5. Android bundle compile: passed on 8081
+6. Activity endpoint tests: 2 passed
+7. Backend full tests: 57 passed
+8. env 미설정 상태 수동 확인: completed
+9. Google 로그인 버튼 설정 누락 에러 표시 수동 확인: completed
+10. Feed -> RouteDetail 이동 수동 재확인: completed
+11. Record 화면 진입 재확인: completed
+12. Start Record 수동 재확인: completed
+13. Find Current Location 수동 확인: completed
+14. Finish Record 수동 확인: completed
+15. Profile 화면 진입 수동 재확인: completed
+16. TASK-020 complete
+17. Record live metrics TypeScript check: passed
+18. Record live metrics Android bundle compile: passed
+19. Record live metrics diff whitespace check: passed with line-ending warnings only
+```
+
+### Record Entry Finding
+
+```text
+1. Device logs confirmed Record button press and RecordScreen mount.
+2. After RecordScreen mount, auth reload and routes/feed reload occurred.
+3. Cause: useActivity used useAuth subscription during RecordScreen render.
+4. Fix: replace useAuth subscription with authService.getSession() in start/finish.
+```
+
+### Activity Start Finding
+
+```text
+1. Device logs confirmed POST /api/v1/activities/start returned 404.
+2. Cause: backend activity start/finish endpoints were missing.
+3. Fix: add route_api endpoints and RouteService/RouteRepository activity methods.
+4. API response structure remains success/data/message.
+```
+
+### Current Location Finding
+
+```text
+1. Expo SDK 54 Location docs checked.
+2. Find Current Location uses existing expo-location dependency.
+3. It requests foreground permission and reads one current position.
+4. It updates existing points state so RunningMap can center on the current point.
+```
+
+### Finish Record Finding
+
+```text
+1. Start Record returned 200 on device, so activities insert works.
+2. Finish Record requires at least 1 GPS point before API call.
+3. GPS noise rules ignore movement under 5m, so stationary tests can keep points at 1.
+4. Single-point finish stores a zero-distance route with matching start/end point.
+5. If POST /activities/{activity_id}/finish returns 500, inspect Supabase postgrest_code.
+```
+
+### Record Metrics Display
+
+```text
+1. RecordScreen currently shows Activity ID, Status, GPS collection state, and GPS Points.
+2. RecordScreen now shows live Distance, Duration, and Pace.
+3. Distance uses the existing GPS point distance utility.
+4. Duration updates every 1 second while the activity is STARTED.
+5. Pace is displayed as -- /km until distance is greater than 0.
+6. Calories, elevation gain, heart rate, and cadence are deferred to a health metrics integration task.
+```
+
 ## Goal
 
 MVP 수동 검증에서 발견된 런타임 진입 문제를 최소 수정한다.

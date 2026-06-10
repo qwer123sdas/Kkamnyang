@@ -1,5 +1,45 @@
 # TASK-019-device-test
 
+## 2026-06-10 Continuation
+
+### Local Verification
+
+```text
+1. Targeted repository tests: 5 passed
+2. Backend full tests: 55 passed
+3. Frontend TypeScript: passed
+4. git diff --check: no whitespace errors
+5. Metro status: packager-status:running on 8081
+```
+
+### Commands
+
+```powershell
+python -m pytest backend\tests\test_route_repository.py -q -k "cluster_column_missing or activities_table_missing or similar or route_history"
+python -m pytest backend\tests -q
+npx.cmd tsc --noEmit
+git diff --check
+npm start
+```
+
+### Notes
+
+```text
+1. Pytest emitted cache write permission warnings, but tests passed.
+2. User confirmed docs/test/route-similar-history-qa.sql was already run in Supabase.
+3. Android device QA completed.
+4. FINISHED activity was verified in History on device.
+```
+
+### Final Device QA Result
+
+```text
+1. Open route_id=1 detail
+2. View History
+3. Confirm FINISHED activity appears
+4. TASK-019 complete
+```
+
 ## 2026-06-09 500 Follow-up
 
 ### Device QA Finding

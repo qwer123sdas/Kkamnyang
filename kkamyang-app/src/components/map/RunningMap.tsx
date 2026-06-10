@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import MapView, {
   Marker,
   Polyline,
@@ -8,6 +8,7 @@ import MapView, {
 
 import {
   DEFAULT_MAP_REGION,
+  MAP_CONFIG,
   RUNNING_ROUTE_POLYLINE,
 } from "../../constants/map";
 import type { GeoPoint } from "../../types/geo";
@@ -31,6 +32,14 @@ function createRegion(point: GeoPoint | undefined): Region {
 export function RunningMap({ points }: RunningMapProps) {
   const currentPoint = points[points.length - 1];
   const region = createRegion(currentPoint);
+
+  if (!MAP_CONFIG.googleMapsApiKey) {
+    return (
+      <View style={[styles.container, styles.unavailableContainer]}>
+        <Text>Map is unavailable.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -59,5 +68,10 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  unavailableContainer: {
+    alignItems: "center",
+    backgroundColor: "#F3F4F6",
+    justifyContent: "center",
   },
 });

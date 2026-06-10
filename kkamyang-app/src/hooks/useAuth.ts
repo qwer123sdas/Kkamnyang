@@ -122,7 +122,16 @@ export function useAuth() {
   );
 
   const signInWithGoogle = useCallback(async () => {
-    await authService.signInWithGoogle();
+    setAuthState({ errorMessage: null });
+
+    try {
+      await authService.signInWithGoogle();
+    } catch (error) {
+      setAuthState({
+        errorMessage:
+          error instanceof Error ? error.message : "GOOGLE_LOGIN_ERROR",
+      });
+    }
   }, []);
 
   return {

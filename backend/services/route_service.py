@@ -154,6 +154,28 @@ class RouteService:
             "has_next": len(rows) > size,
         }
 
+    def start_activity(self, user_id: str, activity_type: str):
+        actor = self._get_actor_login_id(user_id)
+        return self.route_repository.create_activity(
+            user_id=user_id,
+            activity_type=activity_type,
+            actor=actor,
+        )
+
+    def finish_activity(self, activity_id: int, user_id: str, body: dict):
+        actor = self._get_actor_login_id(user_id)
+        activity = self.route_repository.get_active_activity(activity_id, user_id)
+
+        if not activity:
+            raise ApiError(404, "Activity not found", "ACTIVITY_NOT_FOUND")
+
+        return self.route_repository.finish_activity(
+            activity_id=activity_id,
+            user_id=user_id,
+            body=body,
+            actor=actor,
+        )
+
     def create_comment(self, route_id: int, user_id: str, content: str):
         actor = self._get_actor_login_id(user_id)
         self.get_detail(route_id, user_id)

@@ -144,6 +144,27 @@ class FakeRouteService:
             "bookmark_count": 4,
         }
 
+    def start_activity(self, user_id: str, activity_type: str):
+        assert user_id == "00000000-0000-0000-0000-000000000001"
+        assert activity_type == "RUN"
+        return {
+            "activity_id": 1,
+            "activity_type": "RUN",
+            "status": "STARTED",
+            "started_at": "2026-05-19T10:00:00Z",
+            "route_id": None,
+        }
+
+    def finish_activity(self, activity_id: int, user_id: str, body: dict):
+        assert activity_id == 1
+        assert user_id == "00000000-0000-0000-0000-000000000001"
+        assert body["title"] == "RUN Record"
+        return {
+            "activity_id": activity_id,
+            "route_id": 10,
+            "status": "FINISHED",
+        }
+
     def get_comments(self, route_id: int, page: int, size: int):
         assert route_id == 10
         assert page == 1
@@ -555,6 +576,67 @@ def test_route_history_returns_paginated_activities():
             "page": 1,
             "size": 20,
             "has_next": False,
+        },
+        "message": None,
+    }
+    app.dependency_overrides.clear()
+
+
+def test_activity_start_requires_authentication_and_returns_started_activity():
+    app.dependency_overrides[get_route_service] = override_route_service
+    app.dependency_overrides[get_current_auth_user] = override_current_auth_user
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/activities/start",
+        json={"activity_type": "RUN"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "success": True,
+        "data": {
+            "activity_id": 1,
+            "activity_type": "RUN",
+            "status": "STARTED",
+            "started_at": "2026-05-19T10:00:00Z",
+            "route_id": None,
+        },
+        "message": None,
+    }
+    app.dependency_overrides.clear()
+
+
+def test_activity_finish_requires_authentication_and_returns_finished_activity():
+    app.dependency_overrides[get_route_service] = override_route_service
+    app.dependency_overrides[get_current_auth_user] = override_current_auth_user
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/activities/1/finish",
+        json={
+            "title": "RUN Record",
+            "description": "",
+            "visibility": "PUBLIC",
+            "encoded_polyline": "xxxxx",
+            "route_geojson": {
+                "type": "LineString",
+                "coordinates": [[126.978, 37.5665], [126.979, 37.5666]],
+            },
+            "start_point": {"lat": 37.5665, "lng": 126.978},
+            "end_point": {"lat": 37.5666, "lng": 126.979},
+            "distance_km": 0.1,
+            "duration_sec": 60,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "success": True,
+        "data": {
+            "activity_id": 1,
+            "route_id": 10,
+            "status": "FINISHED",
         },
         "message": None,
     }

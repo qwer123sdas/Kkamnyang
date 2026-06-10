@@ -31,6 +31,23 @@ export function useGPSRecorder() {
     useState<GPSPermissionStatus>("undetermined");
   const [points, setPoints] = useState<RecordedGeoPoint[]>([]);
 
+  const requestLocationPermission = useCallback(async () => {
+    const permission = await Location.requestForegroundPermissionsAsync();
+    const nextPermissionStatus =
+      permission.status === Location.PermissionStatus.GRANTED
+        ? "granted"
+        : "denied";
+
+    setPermissionStatus(nextPermissionStatus);
+
+    if (nextPermissionStatus !== "granted") {
+      setErrorMessage("Location permission is required.");
+      return false;
+    }
+
+    return true;
+  }, []);
+
   const collectCurrentLocation = useCallback(async () => {
     try {
       const location = await Location.getCurrentPositionAsync(LOCATION_OPTIONS);
@@ -42,6 +59,18 @@ export function useGPSRecorder() {
       setErrorMessage("GPS coordinate collection failed.");
     }
   }, []);
+
+  const locateCurrentPosition = useCallback(async () => {
+    setErrorMessage(null);
+
+    const hasPermission = await requestLocationPermission();
+
+    if (!hasPermission) {
+      return;
+    }
+
+    await collectCurrentLocation();
+  }, [collectCurrentLocation, requestLocationPermission]);
 
   const stop = useCallback(() => {
     if (intervalRef.current) {
@@ -60,16 +89,9 @@ export function useGPSRecorder() {
 
     setErrorMessage(null);
 
-    const permission = await Location.requestForegroundPermissionsAsync();
-    const nextPermissionStatus =
-      permission.status === Location.PermissionStatus.GRANTED
-        ? "granted"
-        : "denied";
+    const hasPermission = await requestLocationPermission();
 
-    setPermissionStatus(nextPermissionStatus);
-
-    if (nextPermissionStatus !== "granted") {
-      setErrorMessage("Location permission is required.");
+    if (!hasPermission) {
       return;
     }
 
@@ -82,7 +104,7 @@ export function useGPSRecorder() {
       collectCurrentLocation,
       GPS_COLLECTION_INTERVAL_MS.RUN,
     );
-  }, [collectCurrentLocation]);
+  }, [collectCurrentLocation, requestLocationPermission]);
 
   useEffect(() => {
     return stop;
@@ -91,6 +113,7 @@ export function useGPSRecorder() {
   return {
     errorMessage,
     isCollecting,
+    locateCurrentPosition,
     permissionStatus,
     points,
     start,

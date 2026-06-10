@@ -25,6 +25,32 @@ class RouteCommentUpdateRequest(BaseModel):
     content: str = Field(min_length=1, max_length=1000)
 
 
+class ActivityStartRequest(BaseModel):
+    activity_type: Literal["RUN"]
+
+
+class GeoPointRequest(BaseModel):
+    lat: float
+    lng: float
+
+
+class RouteGeoJsonRequest(BaseModel):
+    type: Literal["LineString"]
+    coordinates: list[list[float]]
+
+
+class ActivityFinishRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=100)
+    description: str = Field(max_length=1000)
+    visibility: Literal["PUBLIC", "PRIVATE"]
+    encoded_polyline: str = Field(min_length=1)
+    route_geojson: RouteGeoJsonRequest
+    start_point: GeoPointRequest
+    end_point: GeoPointRequest
+    distance_km: float = Field(ge=0)
+    duration_sec: int = Field(ge=0)
+
+
 @router.get("/routes/feed")
 def get_route_feed(
     page: int = Query(ge=1),
@@ -85,6 +111,33 @@ def get_route_history(
     route_service: RouteService = Depends(get_route_service),
 ):
     return success_response(route_service.get_route_history(route_id, page, size))
+
+
+@router.post("/activities/start")
+def start_activity(
+    body: ActivityStartRequest,
+    auth_user: AuthUser = Depends(get_current_auth_user),
+    route_service: RouteService = Depends(get_route_service),
+):
+    return success_response(
+        route_service.start_activity(auth_user.user_id, body.activity_type),
+    )
+
+
+@router.post("/activities/{activity_id}/finish")
+def finish_activity(
+    activity_id: int,
+    body: ActivityFinishRequest,
+    auth_user: AuthUser = Depends(get_current_auth_user),
+    route_service: RouteService = Depends(get_route_service),
+):
+    return success_response(
+        route_service.finish_activity(
+            activity_id,
+            auth_user.user_id,
+            body.model_dump(),
+        ),
+    )
 
 
 @router.get("/routes/{route_id}")

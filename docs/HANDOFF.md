@@ -209,14 +209,15 @@ CRLF 변환 경고만 있음.
 
 TASK-019와 TASK-020에 남은 QA는 없다.
 
-다음 건강 지표 작업은 구현 전에 spike를 먼저 진행한다.
+Skeleton 이후 backend 작업은 TASK-025까지 완료된 기준으로 본다.
+
+다음 QA는 frontend-backend 통합 안정화 이후 Android 실기기 회귀 QA로 진행한다.
 
 ```text
-1. 우선 지원 플랫폼을 결정한다: iOS HealthKit 우선, Android Health Connect 우선, 또는 둘 다.
-2. 후보 health library가 Expo SDK 54와 호환되는지 확인한다.
-3. development build가 필요한지 확인한다.
-4. 건강 데이터 권한 UX를 GPS 권한과 분리해 정의한다.
-5. 심박수 또는 케이던스 sample 저장 전에 DB/API 설계를 작성한다.
+1. TASK-026에서 Login -> users/me -> Feed -> Detail -> Record -> Profile 통합 흐름을 안정화한다.
+2. TASK-027에서 Android 실기기 기준 MVP 회귀 QA를 수행한다.
+3. TASK-028에서 검증된 화면 흐름을 기준으로 Google Stitch UX/UI 방향을 정의한다.
+4. 건강 지표 spike는 UX/UI 기준 정리 이후 별도 task로 진행한다.
 ```
 
 ### QA가 다시 실패할 경우
@@ -281,18 +282,28 @@ postgrest_code 없는 500
 다음 task:
 
 ```text
-TASK-026-health-platform-spike
+TASK-026-frontend-backend-integration
 ```
 
 구체적인 다음 단계:
 
 ```text
-1. iOS HealthKit, Android Health Connect, 또는 둘 다 중 무엇을 먼저 지원할지 결정한다.
-2. Expo SDK 54와 호환되는 health data 연동 방식을 조사한다.
-3. development build 필요 여부를 확인한다.
-4. 심박수와 케이던스를 위한 최소 health metrics sample 형태를 정의한다.
-5. 구현 전에 별도 task로 DB schema와 API 변경 설계를 작성한다.
-6. 칼로리와 고도상승은 심박수/케이던스 이후의 보조 지표로 둔다.
+1. frontend 서비스와 backend endpoint 연결 상태를 확인한다.
+2. Google OAuth -> Supabase session -> GET /api/v1/users/me 흐름을 확인한다.
+3. Android 실기기에서 PC backend에 접근 가능한지 확인한다.
+4. Feed / Detail / Record / Profile 화면의 실제 API 연결을 확인한다.
+5. TASK-027-mobile-manual-qa-regression으로 회귀 QA를 수행한다.
+6. TASK-028-stitch-ux-ui-direction 기준으로 Google Stitch UX/UI 작업을 진행한다.
+7. 건강 지표 spike는 이후 별도 task로 재개한다.
+```
+
+추가 문서:
+
+```text
+docs/frontend-backend-contract.md
+docs/task/TASK-026-frontend-backend-integration.md
+docs/task/TASK-027-mobile-manual-qa-regression.md
+docs/task/TASK-028-stitch-ux-ui-direction.md
 ```
 
 ### 정리 참고

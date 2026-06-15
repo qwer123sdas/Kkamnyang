@@ -1,5 +1,28 @@
 # TASK-023-backend-skeleton
 
+## 2026-06-15 Progress
+
+### Completed
+
+```text
+1. backend/ FastAPI skeleton exists.
+2. GET /api/v1/health exists and returns the common success response.
+3. GET /api/v1/users/me exists and uses Bearer token authentication.
+4. /users/me does not accept user_id from request input.
+5. Bearer token verification uses Supabase Auth user info.
+6. users lookup/create is isolated in backend repository/service code.
+7. users lookup/create uses SUPABASE_SERVICE_ROLE_KEY only inside backend repository requests.
+8. TASK-023 backend test command passed.
+```
+
+### Verification Result
+
+```text
+Command: python -m pytest backend/tests
+Result: 57 passed
+Warnings: pytest cache write warnings for .pytest_cache permission only
+```
+
 ## Goal
 
 문서상 정의된 FastAPI 백엔드 최소 골격을 생성한다.

@@ -76,11 +76,11 @@ Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8081/index.bundle?plat
 ### Server
 
 ```text
-[ ] backend starts on 0.0.0.0:8000
+[x] backend starts on 0.0.0.0:8000
 [ ] Android browser opens http://PC-IPv4:8000/api/v1/health
-[ ] Expo dev server starts
+[x] Expo dev server starts
 [ ] Android device opens app through Expo Go
-[ ] app import stage has no crash
+[x] app import stage has no crash
 ```
 
 ### Auth
@@ -141,11 +141,81 @@ Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8081/index.bundle?plat
 [ ] Bookmarks item opens RouteDetail
 ```
 
+## TASK-026 Carryover Physical-Device Checks
+
+TASK-026 automated/local checks passed, but the following physical-device checks are carried into TASK-027.
+
+```text
+[ ] Android physical device can open http://10.205.46.48:8000/api/v1/health.
+[ ] Google OAuth returns to the app.
+[ ] Supabase session exists after login.
+[ ] GET /api/v1/users/me returns 200 with common success response.
+[ ] Feed screen loads without runtime crash.
+[ ] Feed -> Detail navigation works.
+[ ] Record screen opens without map key crash.
+[ ] Start Record returns 200.
+[ ] Find Current Location works when foreground location permission is granted.
+[ ] Finish Record works when GPS point count is at least 1.
+[ ] Profile screen loads /users/me data.
+[ ] My Routes screen opens.
+[ ] Bookmarks screen opens.
+```
+
 ## Failure Log
 
 | Date | Area | Step | Expected | Actual | Suspected Cause | Follow-up Task |
 |---|---|---|---|---|---|---|
 | | | | | | | |
+
+## Progress Log
+
+### 2026-06-21
+
+Automated/local checks:
+
+```text
+1. Backend test passed.
+   Command: python -m pytest backend/tests
+   Result: 57 passed, 131 warnings
+
+2. Frontend type check passed.
+   Command: npx.cmd tsc --noEmit
+   Result: passed
+
+3. Android bundle compile passed.
+   Command: Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8081/index.bundle?platform=android&dev=true&minify=false" | Select-Object StatusCode
+   Result: 200
+
+4. Backend health passed locally.
+   Command: python -m uvicorn app.main:app --reload --app-dir backend --host 0.0.0.0 --port 8000
+   Result: GET http://127.0.0.1:8000/api/v1/health returned 200.
+
+5. Expo dev server is listening on 8081.
+   Result: 0.0.0.0:8081 LISTENING
+
+6. Backend server is listening on 8000.
+   Result: 0.0.0.0:8000 LISTENING
+
+7. PC IPv4 candidate for Android device test:
+   URL: http://10.205.46.48:8000/api/v1/health
+
+8. Backend health passed through PC IPv4 from host machine.
+   URL: http://10.205.46.48:8000/api/v1/health
+   Result: 200
+```
+
+Pending physical-device checks:
+
+```text
+1. Android browser opens http://10.205.46.48:8000/api/v1/health.
+2. Android device opens app through Expo Go.
+3. Google OAuth returns to app.
+4. Supabase session exists after login.
+5. GET /api/v1/users/me returns 200.
+6. Feed, Detail, Record, Profile, My Routes, and Bookmarks screens open without runtime crash.
+7. Record start/finish works against backend API.
+8. Failure and fallback states are verified on device.
+```
 
 ## Completion Criteria
 
@@ -154,4 +224,13 @@ Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8081/index.bundle?plat
 2. Any failed item has a failure log row.
 3. No runtime crash remains in Login -> Feed -> Detail -> Record -> Profile flow.
 4. TASK-028 Stitch UX/UI work can use the verified app flow as its baseline.
+```
+
+## Follow-up Checklist Rule
+
+```text
+1. 실기기 검증은 TASK-027 범위까지 진행한 뒤 정리한다.
+2. TASK-027 결과를 기준으로 필요한 후속 체크리스트를 별도 작성한다.
+3. 후속 체크리스트에는 통과 항목, 실패 항목, 재검증 필요 항목을 구분한다.
+4. 실패 항목은 Failure Log의 Follow-up Task와 연결한다.
 ```

@@ -21,6 +21,60 @@ Login
 -> My Routes / Bookmarks
 ```
 
+## Progress Log
+
+### 2026-06-21
+
+Automated checks:
+
+```text
+1. Backend test passed.
+   Command: python -m pytest backend/tests
+   Result: 57 passed, 131 warnings
+
+2. Frontend dependency install passed.
+   Command: npm.cmd install
+   Result: 831 packages installed.
+   Note: npm audit reported 25 vulnerabilities.
+
+3. Frontend type check passed.
+   Command: npx.cmd tsc --noEmit
+   Result: passed
+
+4. Frontend run passed.
+   Command: npm start
+   Command: npm.cmd start
+   Result: Metro Bundler started on http://localhost:8081
+   Note: expo reported expo@54.0.34, expected ~54.0.35.
+
+5. Android bundle compile passed.
+   Command: Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8081/index.bundle?platform=android&dev=true&minify=false" | Select-Object StatusCode
+   Result: 200
+
+6. Backend health check passed.
+   Command: python -m uvicorn app.main:app --reload --app-dir backend --host 0.0.0.0 --port 8000
+   Result: GET /api/v1/health returned 200 with common success response.
+
+7. Diff check passed.
+   Command: git config --global --add safe.directory C:/project/Kkamnyang
+   Command: git diff --check
+   Result: passed with LF-to-CRLF warning for this task document.
+```
+
+Code inspection:
+
+```text
+1. apiClient unwraps the common success response and sends Authorization Bearer when an access token exists.
+2. userService.getMe calls GET /users/me with the Supabase access token.
+3. authService calls /users/me after a Supabase session exists.
+4. activityService.start calls POST /activities/start with RUN.
+5. activityService.finish calls POST /activities/{activity_id}/finish with route payload.
+6. useActivity prevents finish when GPS point count is 0 and duplicates a single point for stationary finish.
+7. Frontend .env file exists.
+8. Backend .env file exists.
+9. Backend config reads OS environment variables only; it does not load .env automatically.
+```
+
 ## Context
 
 ```text
@@ -108,6 +162,13 @@ Frontend run:
 
 ```powershell
 npm start
+npm.cmd start
+```
+
+Frontend dependency install:
+
+```powershell
+npm.cmd install
 ```
 
 Frontend type check:
@@ -125,6 +186,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "http://127.0.0.1:8081/index.bundle?plat
 Diff check:
 
 ```powershell
+git config --global --add safe.directory C:/project/Kkamnyang
 git diff --check
 ```
 

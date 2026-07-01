@@ -174,3 +174,42 @@ After TASK-027 physical-device QA:
 
 3. git diff --check passes with LF-to-CRLF warnings only.
 ```
+
+### Obsidian 문서 구조
+
+위의 현재 프로젝트 상태는 인수인계 맥락의 기준 정보로 유지한다. 아래 Obsidian 운영 문서는 탐색과 작업 관리를 위한 링크로만 사용한다.
+
+```text
+PROJECT.md
+todo.md
+docs/FRONTEND-BOARD.md
+docs/decision/
+docs/issue/
+docs/task/TASK-030-frontend-common-api-types.md
+docs/task/TASK-031-frontend-auth-flow.md
+docs/task/TASK-032-frontend-route-feed.md
+docs/task/TASK-033-frontend-route-detail.md
+docs/task/TASK-034-frontend-running-record.md
+docs/task/TASK-035-frontend-profile.md
+docs/task/TASK-036-frontend-bookmark.md
+docs/task/TASK-037-frontend-common-states.md
+docs/task/TASK-038-frontend-integration-qa.md
+```
+
+### 관련 문서
+
+- [[PROJECT]]
+- [[docs/FRONTEND-BOARD]]
+- [[todo]]
+- [[docs/decision/DEC-001-frontend-layering]]
+- [[docs/decision/DEC-002-mvp-scope]]
+- [[docs/issue/ISSUE-001-local-development]]
+- [[docs/task/TASK-030-frontend-common-api-types]]
+- [[docs/task/TASK-031-frontend-auth-flow]]
+- [[docs/task/TASK-032-frontend-route-feed]]
+- [[docs/task/TASK-033-frontend-route-detail]]
+- [[docs/task/TASK-034-frontend-running-record]]
+- [[docs/task/TASK-035-frontend-profile]]
+- [[docs/task/TASK-036-frontend-bookmark]]
+- [[docs/task/TASK-037-frontend-common-states]]
+- [[docs/task/TASK-038-frontend-integration-qa]]

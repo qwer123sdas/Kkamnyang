@@ -77,3 +77,13 @@ Audit actor는 이메일 또는 사람 이름을 저장하지 않는다.
 
 ```sql
 deleted_yn default 'N'
+```
+
+---
+
+## 관련 문서
+
+- [[PROJECT]]
+- [[docs/HANDOFF]]
+- [[docs/FRONTEND-BOARD]]
+- [[todo]]

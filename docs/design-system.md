@@ -333,3 +333,12 @@ Extended with:
 - Document Policies
 
 Total target length: 250-400 lines. Keep sections concise and actionable.
+
+---
+
+## 관련 문서
+
+- [[PROJECT]]
+- [[docs/HANDOFF]]
+- [[docs/FRONTEND-BOARD]]
+- [[todo]]

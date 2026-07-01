@@ -965,3 +965,12 @@ size = 50
 - 관리자 API
 - 추천 알고리즘 고도화 API
 - 실시간 위치 공유 API
+
+---
+
+## 관련 문서
+
+- [[PROJECT]]
+- [[docs/HANDOFF]]
+- [[docs/FRONTEND-BOARD]]
+- [[todo]]

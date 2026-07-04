@@ -3,15 +3,16 @@ id: lunit
 name: Lunit
 country: KR
 category: healthcare
-homepage: "https://www.lunit.io"
+homepage: https://www.lunit.io
 primary_color: "#1032cf"
 logo:
   type: favicon
-  slug: "https://www.google.com/s2/favicons?domain=lunit.io&sz=256"
-verified: "2026-05-14"
+  slug: https://www.google.com/s2/favicons?domain=lunit.io&sz=256
+verified: 2026-05-14
 omd: "0.1"
+link:
 ---
-
+[[TASK-003B-auth-session-fix]]
 # Custom Design System (based on Lunit)
 
 ## 1. Visual Theme & Atmosphere

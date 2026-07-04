@@ -1,36 +1,55 @@
-# KKamyang 인수인계
+# KKamyang HANDOFF
 
-이 파일은 Codex, Obsidian, 향후 AI 도구를 위한 루트 인수인계 진입점이다.
+이 파일은 다음 작업자가 바로 이어받기 위한 현재 상태 요약이다.
+상세 결정, 긴 작업 이력, 개인 로그를 누적하지 않고 관련 프로젝트 문서로 연결한다.
 
-## 현재 원본
+## 현재 상태
 
-상세 인수인계 이력은 다음 문서에 보존되어 있다.
+- Obsidian / LLM WIKI 관리는 `docs/` 중심으로 운영한다.
+- 문서 진입점은 `docs/INDEX.md`다.
+- LLM WIKI 운영 규칙은 `docs/guide/08-llm-wiki-guide.md`를 따른다.
+- graphify 산출물은 `docs/graph/`에 보관한다.
+- 프론트엔드 현재 작업판은 `docs/FRONTEND-BOARD.md`를 사용한다.
+- `docs/todo/current.md`는 현재 만들지 않는다. 프로젝트 전체 TODO 허브가 필요해질 때만 추가한다.
+- 프로젝트 지식 문서에서는 개인 작업 로그로 향하는 링크를 만들지 않는다.
 
-- `docs/HANDOFF.md`
+## 바로 다음 작업
 
-해당 파일을 삭제하거나 대체하지 않는다.
-이 루트 파일은 안정적인 시작 지점이자 링크 허브로 사용한다.
+- [ ] Obsidian에서 `docs/INDEX.md` 링크 이동 확인
+- [ ] `docs/guide/05-decisions.md`가 의사결정 인덱스로 유지되는지 확인
+- [ ] 월별 결정 로그는 `docs/decisions/2026/2026-07.md`에 누적
+- [ ] 프론트엔드 작업 상태는 `docs/FRONTEND-BOARD.md`에서 관리
 
-## 최초 읽기 순서
+## 주요 링크
 
-1. `AGENTS.md`
-2. `README.md`
-3. `docs/00-index.md`
-4. `docs/guide/08-llm-wiki-guide.md`
-5. 관련 `docs/task/TASK-*.md`
-6. 관련 소스 코드와 테스트
+- 문서 인덱스: `docs/INDEX.md`
+- LLM WIKI 가이드: `docs/guide/08-llm-wiki-guide.md`
+- graphify 가이드: `docs/guide/09-graphify-guide.md`
+- 의사결정 인덱스: `docs/guide/05-decisions.md`
+- 월별 결정 로그: `docs/decisions/2026/2026-07.md`
+- 프론트엔드 보드: `docs/FRONTEND-BOARD.md`
+- 상세 인수인계 이력: `docs/HANDOFF.md`
 
-## 현재 프로젝트 정책
+## HANDOFF 문서 역할
 
-- MVP 범위는 `RUN`이다.
+- `HANDOFF.md`: 현재 상태, 다음 작업, 주의사항, 주요 링크만 담는 짧은 상태판
+- `docs/HANDOFF.md`: 과거 상세 인수인계와 검증 결과를 보존하는 이력 문서
+
+## 현재 결정 요약
+
+- MVP는 `RUN` 중심이다.
 - `RIDE`, `HIKE`는 향후 확장 항목이다.
-- 기존 문서는 보존한다.
-- 새 문서는 기존 내용을 대체하기보다 링크, 요약, 인덱스 방식으로 작성한다.
-- Task에서 명시하지 않는 한 코드 변경과 기능 구현은 범위 밖이다.
+- 프론트엔드 흐름은 `Screen -> Hook -> Service -> apiClient`를 따른다.
+- 백엔드 흐름은 `API -> Service -> Repository -> Database`를 따른다.
+- 상세 결정은 `docs/decisions/YYYY/YYYY-MM.md`에 기록한다.
+- 장기 정책 단위 결정은 기존 `docs/decision/DEC-*.md` 문서도 함께 참조한다.
+- 개인 작업 로그는 프로젝트 지식과 분리하고, 프로젝트 지식은 `docs/`에 남긴다.
 
-## AI 보안 메모
+## 주의사항
 
-- Secret은 신뢰 경계 밖 데이터로 취급한다.
-- `.env` 실제 값을 읽거나, 출력하거나, 요약하거나, 로그에 남기지 않는다.
-- 환경변수는 `SET` 또는 `NOT_SET` 여부만 확인한다.
+- 기존 코드 수정 금지. 명시적 Task가 있을 때만 코드 변경한다.
+- 기존 문서 삭제 금지. 필요한 경우 인덱스, 링크, 보강 문서를 추가한다.
+- `.env` 실제 값 읽기, 출력, 요약 금지.
 - `EXPO_PUBLIC_*` 값도 출력하지 않는다.
+- 환경변수는 `SET` / `NOT_SET` 여부만 확인한다.
+- API 응답 구조, DB 스키마, Router 구조, 상태관리 라이브러리는 Task 범위 없이 변경하지 않는다.

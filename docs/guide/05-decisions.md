@@ -1,26 +1,55 @@
-# 의사결정 기록
+# 의사결정 인덱스
 
-이 파일은 향후 AI 또는 개발자 작업에 영향을 주는 프로젝트 수준 의사결정을 기록하는 곳이다.
+이 문서는 의사결정의 본문을 길게 누적하지 않는다.
+현재 지켜야 할 핵심 정책과 상세 결정 문서 링크만 관리한다.
 
-상세 구현 메모는 이 파일에 적지 않는다.
-상세 구현 메모는 관련 Task 문서에 기록한다.
+## 읽는 방법
 
-## 형식
+- 현재 적용 중인 핵심 정책은 이 문서에서 확인한다.
+- 상세 결정 배경과 영향은 월별 결정 로그에서 확인한다.
+- 장기 정책 단위 결정은 `docs/decision/DEC-*.md` 문서도 함께 확인한다.
 
-```text
-날짜:
-결정:
-맥락:
-영향:
-관련 문서:
+## 월별 결정 로그
+
+- [[docs/decisions/2026/2026-07]] (`docs/decisions/2026/2026-07.md`)
+
+## 장기 정책 결정
+
+- [[docs/decision/DEC-001-frontend-layering]] (`docs/decision/DEC-001-frontend-layering.md`)
+- [[docs/decision/DEC-002-mvp-scope]] (`docs/decision/DEC-002-mvp-scope.md`)
+
+## 현재 핵심 정책
+
+- MVP는 `RUN` 중심이다.
+- `RIDE`, `HIKE`는 향후 확장 항목이다.
+- 프론트엔드는 `Screen -> Hook -> Service -> apiClient` 구조를 따른다.
+- 백엔드는 `API -> Service -> Repository -> Database` 구조를 따른다.
+- `HANDOFF.md`는 현재 상태와 다음 작업만 짧게 유지한다.
+- 상세 결정은 `docs/decisions/YYYY/YYYY-MM.md`에 기록한다.
+- 프로젝트 전체 현재 TODO 허브가 필요해질 때만 `docs/todo/current.md`를 만든다.
+- 현재 프론트엔드 작업 관리는 `docs/FRONTEND-BOARD.md`를 사용한다.
+- 프로젝트 지식 문서에서는 개인 작업 로그로 향하는 링크를 만들지 않는다.
+
+## 기록 규칙
+
+새로운 결정은 다음 기준으로 기록한다.
+
+- 지금 당장 이어받아야 하는 상태: `HANDOFF.md`
+- 장기적으로 남길 결정: `docs/decisions/YYYY/YYYY-MM.md`
+- 확정된 작업 단위: `docs/task/TASK-*.md`
+- 프론트엔드 작업 상태: `docs/FRONTEND-BOARD.md`
+- 개인 작업 로그와 AI 대화 흐름: 프로젝트 지식 문서에서 링크하지 않는다.
+
+## 결정 기록 템플릿
+
+```markdown
+## YYYY-MM-DD - 결정 제목
+
+### 결정
+
+### 이유
+
+### 영향
+
+### 관련 문서
 ```
-
-## 결정 목록
-
-### 2026-07-04 - 기존 문서를 보존하고 탐색 계층 추가
-
-날짜: 2026-07-04
-결정: 인덱스와 가이드 문서를 추가해 Obsidian, LLM WIKI, graphify 문서 구조를 만든다.
-맥락: 기존 문서와 Task 파일에는 이미 프로젝트 이력이 담겨 있다. 일부 오래된 문서는 터미널 출력에서 인코딩 문제가 보일 수 있어 대체 작업은 위험하다.
-영향: 새 번호 문서는 탐색 및 운영 계층으로 사용한다. 기존 원본 문서는 보존한다.
-관련 문서: `00-index.md`, `08-llm-wiki-guide.md`, `09-graphify-guide.md`

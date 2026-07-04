@@ -11,7 +11,7 @@ KKamyang은 GPS 기반 러닝 기록 및 경로 공유 앱 RouteLog의 프로젝
 
 1. `AGENTS.md`
 2. `HANDOFF.md`
-3. `docs/00-index.md`
+3. `docs/INDEX.md`
 4. `docs/guide/08-llm-wiki-guide.md`
 5. 관련 `docs/task/TASK-*.md`
 
@@ -19,7 +19,7 @@ KKamyang은 GPS 기반 러닝 기록 및 경로 공유 앱 RouteLog의 프로젝
 
 ```text
 docs/
-  00-index.md
+  INDEX.md
   guide/
     01-overview.md
     02-architecture.md

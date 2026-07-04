@@ -17,7 +17,7 @@
 ## 기능 조사
 
 ```text
-먼저 AGENTS.md, docs/00-index.md, 관련 docs/task/TASK-*.md를 읽어라.
+먼저 AGENTS.md, docs/INDEX.md, 관련 docs/task/TASK-*.md를 읽어라.
 프론트엔드 조사는 Screen -> Hook -> Service -> apiClient 흐름을 따른다.
 백엔드 조사는 API -> Service -> Repository -> Database 흐름을 따른다.
 명시적인 Task 범위 없이 DB 스키마, API 응답 구조, Router 구조, 상태관리, 라이브러리를 변경하지 마라.

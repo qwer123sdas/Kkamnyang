@@ -20,6 +20,7 @@ LLM WIKI 계층은 Codex와 다른 AI 도구가 다음 질문에 빠르게 답�
 - 기능 가이드는 탐색과 경계에 집중한다.
 - Secret이나 실제 환경변수 값을 저장하지 않는다.
 - 추측하지 말고 불확실성을 표시한다.
+- 프로젝트 지식 문서에서는 개인 작업 로그로 향하는 링크를 만들지 않는다.
 
 ## 필수 프로젝트 사실
 
@@ -36,12 +37,31 @@ LLM WIKI 계층은 Codex와 다른 AI 도구가 다음 질문에 빠르게 답�
 AGENTS.md
 -> README.md
 -> HANDOFF.md
--> docs/00-index.md
--> docs/01-overview.md
--> related docs/feature/*.md
--> related docs/task/TASK-*.md
+-> docs/INDEX.md
+-> 관련 docs/feature/*.md
+-> 관련 docs/task/TASK-*.md
 -> source code
 ```
+
+## 토큰 절약 규칙
+
+Codex는 기본적으로 다음 문서만 읽는다.
+
+1. `AGENTS.md`
+2. `HANDOFF.md`
+3. `docs/INDEX.md`
+4. 관련 feature 문서
+5. 관련 task 문서
+
+다음 문서는 필요할 때만 읽는다.
+
+- `docs/guide/05-decisions.md`
+- `docs/decisions/**`
+- `docs/graph/**`
+- 개인 작업 로그
+
+개인 작업 로그와 긴 로그는 사용자가 명시적으로 요청하지 않는 한 읽지 않는다.
+프로젝트 지식 문서에서는 개인 작업 로그로 향하는 링크를 만들지 않는다.
 
 ## 기능 가이드 규칙
 

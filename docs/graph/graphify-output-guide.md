@@ -35,7 +35,7 @@ API -> Service -> Repository -> Database
 
 ```text
 README/HANDOFF
--> docs/00-index.md
+-> docs/INDEX.md
 -> docs/feature/*.md
 -> docs/task/TASK-*.md
 -> source files

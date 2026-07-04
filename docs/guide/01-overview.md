@@ -51,7 +51,7 @@ MVP는 다음에 집중한다.
 AGENTS.md
 -> README.md
 -> HANDOFF.md
--> docs/00-index.md
+-> docs/INDEX.md
 -> related feature guide
 -> related task document
 -> code

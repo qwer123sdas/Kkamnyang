@@ -4,24 +4,39 @@
     "type": "split",
     "children": [
       {
-        "id": "2107845801e3fa77",
+        "id": "a673781cf3240139",
         "type": "tabs",
         "children": [
           {
-            "id": "9a0438c485df9269",
+            "id": "fa3fdf95903978a8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "To-Do/2026-07/2026-07-04.md",
+                "file": "docs/guide/08-llm-wiki-guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-07-04"
+              "title": "08-llm-wiki-guide"
+            }
+          },
+          {
+            "id": "6310a7d5604acaff",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/decision/DEC-001-frontend-layering.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "DEC-001-frontend-layering"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -94,7 +109,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "To-Do/2026-07/2026-07-04.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +118,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "2026-07-04 의 백링크"
+              "title": "백링크"
             }
           },
           {
@@ -156,13 +170,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "To-Do/2026-07/2026-07-04.md",
+                "file": "docs-proposal/todo.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "2026-07-04 의 개요"
+              "title": "todo 의 개요"
             }
           },
           {
@@ -195,44 +209,44 @@
       "periodic-notes:Open today": false
     }
   },
-  "active": "9a0438c485df9269",
+  "active": "8c41f41640c23082",
   "lastOpenFiles": [
-    "Clippings/옵시디언에 AI를 달았더니 겪는 놀라운 변화.md",
-    "To-Do/2026-07/2026-07-04.md",
-    "Clippings",
-    "Clippings/LLM Wiki가 망하는 진짜 이유 Obsidian·Claude Code보다 중요한 AI OS 설계.md",
-    "docs/00-index.md",
-    "docs/archive-or-legacy/00-LLM-ENTRY.md",
-    "docs/archive-or-legacy/00-DOC-MAP.md",
-    "docs/archive-or-legacy",
-    "docs/source/requirements.md",
-    "docs/source/frontend-backend-contract.md",
-    "docs/source/design-system.md",
-    "docs/source/db-schema.md",
-    "docs/source/architecture.md",
-    "docs/source/api-spec.md",
-    "docs/source",
-    "docs/sourxe",
-    "docs/guide/09-graphify-guide.md",
-    "docs/guide/08-llm-wiki-guide.md",
-    "docs/guide/07-codex-prompts.md",
-    "docs/guide/06-error-log.md",
-    "docs/guide/05-decisions.md",
-    "docs/guide/04-db-schema.md",
-    "docs/guide/03-api-spec.md",
-    "docs/guide/02-architecture.md",
-    "docs/guide/01-overview.md",
-    "docs/guide",
-    "kkamyang-app/node_modules/@react-native/metro-config/node_modules/negotiator/README.md",
-    "kkamyang-app/node_modules/@react-native/metro-config/node_modules/mime-types/README.md",
-    "kkamyang-app/node_modules/ms/license.md",
+    "docs-proposal/docs/FRONTEND-BOARD.md",
+    "docs-proposal/HANDOFF.md",
+    "docs-proposal/PROJECT.md",
+    "docs/FRONTEND-BOARD.md",
     "docs/graph/graphify-output-guide.md",
-    "docs/graph/README.md",
-    "docs/graph",
-    "docs/feature",
-    "obsidian/templates",
-    "obsidian/image",
-    "obsidian",
+    "To-Do/2026-07/2026-07-05.md",
+    "To-Do/2026-07/2026-07-04.md",
+    "2026-07-03.md",
+    "obsidian/templates/To-Do Template.md",
+    "kkamyang-app/node_modules/undici/docs/docs/api/Dispatcher.md",
+    "docs/AGENTS.md",
+    "kkamyang-app/node_modules/react-native/node_modules/commander/Readme.md",
+    "kkamyang-app/node_modules/ms/license.md",
+    "docs/INDEX.md",
+    "docs/HANDOFF.md",
+    "docs/00-index.md",
+    "docs/archive-or-legacy/00-DOC-MAP.md",
+    "docs/archive-or-legacy/00-LLM-ENTRY.md",
+    "docs/guide/08-llm-wiki-guide.md",
+    "docs/decisions/2026/2026-07.md",
+    "docs/db/db_ddl.md",
+    "docs/02-design/features/route-feed-backend.design.md",
+    "docs/01-plan/features/route-feed-backend.plan.md",
+    "docs/04-report/route-feed-backend.report.md",
+    "docs/guide/01-overview.md",
+    "HANDOFF.md",
+    "docs/decisions/2026",
+    "docs/decisions",
+    "docs/issue",
+    "docs/decision",
+    "docs-proposal/docs/task",
+    "docs-proposal/docs/issue",
+    "docs-proposal/docs/decision",
+    "docs-proposal/docs",
+    "docs-proposal",
+    "Clippings",
     "무제.canvas"
   ]
 }

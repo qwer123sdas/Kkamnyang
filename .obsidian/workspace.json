@@ -4,35 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "a673781cf3240139",
+        "id": "dba0d07bed524ba9",
         "type": "tabs",
         "children": [
-          {
-            "id": "fa3fdf95903978a8",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/guide/08-llm-wiki-guide.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "08-llm-wiki-guide"
-            }
-          },
           {
             "id": "6310a7d5604acaff",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/decision/DEC-001-frontend-layering.md",
+                "file": "obsidian/templates/My_Note Template.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DEC-001-frontend-layering"
+              "title": "My_Note Template"
+            }
+          },
+          {
+            "id": "714f943e3a2f1f72",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "To-Do/2026-07/2026-07-05.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-07-05"
             }
           }
         ],
@@ -209,44 +209,44 @@
       "periodic-notes:Open today": false
     }
   },
-  "active": "8c41f41640c23082",
+  "active": "714f943e3a2f1f72",
   "lastOpenFiles": [
-    "docs-proposal/docs/FRONTEND-BOARD.md",
-    "docs-proposal/HANDOFF.md",
-    "docs-proposal/PROJECT.md",
-    "docs/FRONTEND-BOARD.md",
-    "docs/graph/graphify-output-guide.md",
-    "To-Do/2026-07/2026-07-05.md",
     "To-Do/2026-07/2026-07-04.md",
-    "2026-07-03.md",
-    "obsidian/templates/To-Do Template.md",
-    "kkamyang-app/node_modules/undici/docs/docs/api/Dispatcher.md",
-    "docs/AGENTS.md",
-    "kkamyang-app/node_modules/react-native/node_modules/commander/Readme.md",
-    "kkamyang-app/node_modules/ms/license.md",
-    "docs/INDEX.md",
-    "docs/HANDOFF.md",
-    "docs/00-index.md",
-    "docs/archive-or-legacy/00-DOC-MAP.md",
-    "docs/archive-or-legacy/00-LLM-ENTRY.md",
+    "To-Do/2026-07/2026-07-05.md",
+    "todo.md",
+    "LLM-Wiki.md",
+    "docs/guide/10-llm-wiki-operations.md",
     "docs/guide/08-llm-wiki-guide.md",
+    "obsidian/templates/My_Note Template.md",
+    "My_Note/principles/요약 프롬프트.md",
+    "My_Note/records/2026/07/2026-07-05_My Notes - AI OS 문서 운영 구조 정리.md",
+    "My_Note/principles/ai-os-doc-rules.md",
+    "My_Note/principles",
+    "My_Note/records",
+    "My_Note/무제.md",
+    "My_Note/index",
+    "obsidian/templates/To-Do Template.md",
     "docs/decisions/2026/2026-07.md",
-    "docs/db/db_ddl.md",
-    "docs/02-design/features/route-feed-backend.design.md",
-    "docs/01-plan/features/route-feed-backend.plan.md",
-    "docs/04-report/route-feed-backend.report.md",
-    "docs/guide/01-overview.md",
+    "docs/guide/05-decisions.md",
+    "My_Note/records/2026/07",
+    "My_Note/records/2026",
+    "My_Note",
+    "docs/guide/02-architecture.md",
+    "docs/source/requirements.md",
+    "docs/INDEX.md",
+    "docs/decision/DEC-001-frontend-layering.md",
+    "docs/source/frontend-backend-contract.md",
+    "docs/HANDOFF.md",
     "HANDOFF.md",
+    "docs/source/architecture.md",
+    "docs/feature/profile.md",
+    "docs/feature/route-detail.md",
+    "docs/feature/route-feed.md",
+    "docs/feature/running.md",
     "docs/decisions/2026",
     "docs/decisions",
     "docs/issue",
     "docs/decision",
-    "docs-proposal/docs/task",
-    "docs-proposal/docs/issue",
-    "docs-proposal/docs/decision",
-    "docs-proposal/docs",
-    "docs-proposal",
-    "Clippings",
     "무제.canvas"
   ]
 }

@@ -7,16 +7,16 @@
 
 - 현재 적용 중인 핵심 정책은 이 문서에서 확인한다.
 - 상세 결정 배경과 영향은 월별 결정 로그에서 확인한다.
-- 장기 정책 단위 결정은 `docs/decision/DEC-*.md` 문서도 함께 확인한다.
+- 장기 정책 단위 결정은 관련 `docs/guide/` 문서에서 확인한다.
 
 ## 월별 결정 로그
 
 - [[docs/decisions/2026/2026-07]] (`docs/decisions/2026/2026-07.md`)
 
-## 장기 정책 결정
+## 관련 정책 문서
 
-- [[docs/decision/DEC-001-frontend-layering]] (`docs/decision/DEC-001-frontend-layering.md`)
-- [[docs/decision/DEC-002-mvp-scope]] (`docs/decision/DEC-002-mvp-scope.md`)
+- [[docs/guide/01-overview]] (`docs/guide/01-overview.md`)
+- [[docs/guide/02-architecture]] (`docs/guide/02-architecture.md`)
 
 ## 현재 핵심 정책
 

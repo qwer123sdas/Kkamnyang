@@ -183,7 +183,6 @@ After TASK-027 physical-device QA:
 PROJECT.md
 todo.md
 docs/FRONTEND-BOARD.md
-docs/decision/
 docs/issue/
 docs/task/TASK-030-frontend-common-api-types.md
 docs/task/TASK-031-frontend-auth-flow.md
@@ -201,8 +200,8 @@ docs/task/TASK-038-frontend-integration-qa.md
 - [[PROJECT]]
 - [[docs/FRONTEND-BOARD]]
 - [[todo]]
-- [[docs/decision/DEC-001-frontend-layering]]
-- [[docs/decision/DEC-002-mvp-scope]]
+- [[docs/guide/01-overview]]
+- [[docs/guide/02-architecture]]
 - [[docs/issue/ISSUE-001-local-development]]
 - [[docs/task/TASK-030-frontend-common-api-types]]
 - [[docs/task/TASK-031-frontend-auth-flow]]

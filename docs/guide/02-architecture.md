@@ -5,10 +5,10 @@
 
 ## 원본 문서
 
-- `architecture.md`
-- `frontend-backend-contract.md`
-- `api-spec.md`
-- `db-schema.md`
+- [[architecture]] : `architecture.md`
+- [[frontend-backend-contract]] : `frontend-backend-contract.md`
+- [[api-spec|API]] : `api-spec.md`
+- [[db-schema|SCHEMA]] : `db-schema.md`
 
 ## 프론트엔드 원칙
 

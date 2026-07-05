@@ -4,8 +4,8 @@
 
 ## 기준 문서
 
-- `api-spec.md`
-- `frontend-backend-contract.md`
+- [[api-spec|API-SPEC]] : `api-spec.md`
+- [[frontend-backend-contract]] : `frontend-backend-contract.md`
 
 ## API 정책
 

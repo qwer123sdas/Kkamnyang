@@ -4,9 +4,9 @@
 
 ## 원본 문서
 
-- `db-schema.md`
-- `db/db_ddl.md`
-- `db/db_dml.md`
+- [[db-schema|SCHEMA]]  : db/db-schema.md`
+- [[db_ddl|DDL]] : db/db_ddl.md
+- [[db_dml|DML]] : db/db_dml.md
 
 ## 프로젝트 규칙
 

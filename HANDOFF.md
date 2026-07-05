@@ -15,7 +15,7 @@
 
 ## 바로 다음 작업
 
-- [ ] Obsidian에서 `docs/INDEX.md` 링크 이동 확인
+- [x] Obsidian에서 `docs/INDEX.md` 링크 이동 확인 ✅ 2026-07-05
 - [ ] `docs/guide/05-decisions.md`가 의사결정 인덱스로 유지되는지 확인
 - [ ] 월별 결정 로그는 `docs/decisions/2026/2026-07.md`에 누적
 - [ ] 프론트엔드 작업 상태는 `docs/FRONTEND-BOARD.md`에서 관리
@@ -42,7 +42,7 @@
 - 프론트엔드 흐름은 `Screen -> Hook -> Service -> apiClient`를 따른다.
 - 백엔드 흐름은 `API -> Service -> Repository -> Database`를 따른다.
 - 상세 결정은 `docs/decisions/YYYY/YYYY-MM.md`에 기록한다.
-- 장기 정책 단위 결정은 기존 `docs/decision/DEC-*.md` 문서도 함께 참조한다.
+- 장기 정책 단위 결정은 월별 결정 로그와 관련 `docs/guide/` 문서에서 확인한다.
 - 개인 작업 로그는 프로젝트 지식과 분리하고, 프로젝트 지식은 `docs/`에 남긴다.
 
 ## 주의사항

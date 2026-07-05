@@ -6,7 +6,7 @@
 - [x] 프론트엔드 보드 생성: [[docs/FRONTEND-BOARD]]
 - [x] TASK 템플릿 생성: [[.templates/TASK]]
 - [x] 결정 기록 템플릿 생성: [[.templates/DECISION]]
-- [x] [[docs/decision]] 아래 결정 기록 생성
+- [x] 결정 기록을 월별 로그와 guide 문서 중심으로 정리
 - [x] [[docs/issue]] 아래 이슈 기록 생성
 - [x] [[docs/task]] 아래 프론트엔드 `TASK-030`부터 `TASK-038`까지 생성
 - [x] 루트 프로젝트 인덱스를 현재 인수인계 문서에 연결: [[docs/HANDOFF]]

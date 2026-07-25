@@ -1,5 +1,19 @@
 # DB Schema
 
+## 문서 역할
+
+이 문서는 RouteLog 데이터베이스의 공통 스키마 정책과 주요 테이블 목록을 관리한다.
+실행 가능한 전체 생성·변경 SQL을 복제하지 않는다.
+
+```text
+공통 PK/Audit/Soft Delete 정책 -> 이 문서
+현재 생성 SQL과 초기 데이터    -> docs/db/db_dml.md
+증분 DDL과 검증 SQL            -> docs/db/db_ddl.md
+```
+
+문서와 SQL이 다르면 임의로 스키마를 변경하지 않고 관련 Task에 불일치를 기록한다.
+승인된 DB 변경만 이 문서와 관련 SQL에 함께 반영한다.
+
 ## 1. 공통 규칙
 
 ### DB
@@ -81,9 +95,32 @@ deleted_yn default 'N'
 
 ---
 
+## 2. 주요 테이블
+
+| 테이블 | 역할 |
+|---|---|
+| `login_provider` | 로그인 제공자 코드 |
+| `users` | 사용자와 공개 식별자 |
+| `routes` | 저장·공유되는 운동 경로 |
+| `route_clusters` | 유사 Route 그룹 |
+| `activities` | 사용자의 Route 실행 기록 |
+| `route_likes` | Route 좋아요 |
+| `route_comments` | Route 댓글 |
+| `route_bookmarks` | Route 북마크 |
+
+정확한 컬럼, 타입, FK, 인덱스와 지리 데이터 정의는 [[docs/db/db_ddl]]과 [[docs/db/db_dml]]에서 확인한다.
+`route_cluster` 판정 기준과 Activity 기반 Route History 규칙은 [[AGENTS]]를 따른다.
+
+---
+
 ## 관련 문서
 
+- [[AGENTS]]
 - [[PROJECT]]
+- [[docs/source/requirements]]
+- [[docs/source/architecture]]
+- [[docs/db/db_ddl]]
+- [[docs/db/db_dml]]
 - [[docs/HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
 - [[todo]]

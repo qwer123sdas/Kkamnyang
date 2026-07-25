@@ -10,7 +10,7 @@ Obsidian에서 상위 문서인 이 파일을 열었을 때 하위 문서로 바
 - [[HANDOFF|루트 HANDOFF]] : HANDOFF
 - [[AGENTS|Agent 규칙]] : PROJECT
 - [[work_guide|작업 가이드]] : work_guide
-- [[docs/HANDOFF|상세 인수인계 이력]]
+- [[docs/HANDOFF|상세 인수인계 이력]] : docs/HANDOFF
 
 ## 1.1 HANDOFF 역할
 
@@ -66,7 +66,7 @@ Obsidian에서 상위 문서인 이 파일을 열었을 때 하위 문서로 바
   - [[docs/source/api-spec|API 명세 원문]]  : api-spec
   - [[docs/source/frontend-backend-contract|프론트엔드-백엔드 계약 원문]] : frontend-backend-contract
   - [[docs/source/db-schema|DB 스키마 원문]] : db-schema
-  - [[docs/source/design-system|디자인 시스템 원문]] : design-system
+  - [[docs/source/design-system|Lunit 디자인 참고 자료]] : design-system
 
 ---
 # 4. 기능 문서(/feature)

@@ -19,9 +19,9 @@ updated: 2026-07-01
 - [[AGENTS]]
 - [[PROJECT]]
 - [[docs/HANDOFF]]
-- [[docs/architecture]]
-- [[docs/api-spec]]
-- [[docs/design-system]]
+- [[docs/source/architecture]]
+- [[docs/source/api-spec]]
+- [[docs/source/design-system]]
 - [[docs/FRONTEND-BOARD]]
 - [[docs/task/TASK-030-frontend-common-api-types]]
 
@@ -57,4 +57,4 @@ updated: 2026-07-01
 
 # 남은 이슈
 
-- 구현 전에 실제 백엔드 응답과 [[docs/api-spec]]를 비교해야 한다.
+- 구현 전에 실제 백엔드 응답과 [[docs/source/api-spec]]을 비교해야 한다.

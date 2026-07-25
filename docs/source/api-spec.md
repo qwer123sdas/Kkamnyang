@@ -1,5 +1,18 @@
 # API Spec
 
+## 문서 상태 기준
+
+이 문서는 RouteLog API의 상세 계약 원문이다.
+
+| 상태 | 의미 |
+|---|---|
+| `IMPLEMENTED` | 현재 Router와 자동화 테스트에서 확인됨 |
+| `PLANNED` | 요구사항에는 있으나 현재 Router에서 확인되지 않음 |
+| `DEFERRED` | 현재 MVP 범위에서 제외됨 |
+
+`PLANNED` 항목을 구현된 API로 가정하지 않는다.
+상태 변경은 관련 Task의 구현 및 검증 결과를 근거로 한다.
+
 ## 1. 기본 규칙
 
 ### Base URL
@@ -43,9 +56,23 @@ Authorization: Bearer {access_token}
 
 ---
 
+# 1.1 Health API
+
+상태: `IMPLEMENTED`
+
+```http
+GET /api/v1/health
+```
+
+백엔드 가용성과 개발 환경의 네트워크 연결을 확인한다.
+
+---
+
 # 2. Auth API
 
 ## 2.1 OAuth 로그인
+
+상태: `PLANNED`
 
 ```http
 POST /api/v1/auth/oauth
@@ -94,6 +121,8 @@ POST /api/v1/auth/oauth
 
 # 2.2 내 정보 조회
 
+상태: `IMPLEMENTED`
+
 ```http
 GET /api/v1/users/me
 ```
@@ -122,6 +151,8 @@ GET /api/v1/users/me
 ---
 
 # 2.3 일반 회원 login_id 설정
+
+상태: `DEFERRED`
 
 향후 일반 회원가입에서 `login_id`를 최초 설정할 경우 사용한다.
 
@@ -167,6 +198,12 @@ POST /api/v1/users/me/login-id
 
 # 3.1 활동 시작
 
+상태: `IMPLEMENTED`
+
+```http
+POST /api/v1/activities/start
+```
+
 ### activity_type
 
 현재 MVP:
@@ -185,6 +222,8 @@ HIKE
 ---
 
 ## 3.2 활동 종료
+
+상태: `IMPLEMENTED`
 
 활동 종료 시 `routes` 데이터를 생성하고 `activities.route_id`를 연결한다.
 
@@ -245,6 +284,8 @@ POST /api/v1/activities/{activity_id}/finish
 
 ## 3.3 내 활동 목록 조회
 
+상태: `PLANNED`
+
 ```http
 GET /api/v1/activities/me?page=1&size=20
 ```
@@ -281,6 +322,8 @@ GET /api/v1/activities/me?page=1&size=20
 
 ## 4.1 경로 생성
 
+상태: `PLANNED`
+
 활동 기록 없이 수동으로 경로를 저장할 때 사용한다.
 
 ```http
@@ -291,9 +334,9 @@ POST /api/v1/routes
 
 ```json
 {
-  "title": "남산 등산 코스",
-  "description": "초보자용 코스",
-  "activity_type": "HIKE",
+  "title": "한강 러닝 코스",
+  "description": "초보자용 러닝 코스",
+  "activity_type": "RUN",
   "visibility": "PUBLIC",
   "encoded_polyline": "xxxxx",
   "route_geojson": {
@@ -331,6 +374,8 @@ POST /api/v1/routes
 ---
 
 ## 4.2 공개 피드 조회
+
+상태: `IMPLEMENTED`
 
 ```http
 GET /api/v1/routes/feed?page=1&size=20&activity_type=RUN
@@ -382,6 +427,8 @@ GET /api/v1/routes/feed?page=1&size=20&activity_type=RUN
 
 ## 4.3 경로 상세 조회
 
+상태: `IMPLEMENTED`
+
 ```http
 GET /api/v1/routes/{route_id}
 ```
@@ -429,6 +476,8 @@ GET /api/v1/routes/{route_id}
 
 ## 4.4 내 경로 목록 조회
 
+상태: `IMPLEMENTED`
+
 ```http
 GET /api/v1/routes/me?page=1&size=20
 ```
@@ -462,6 +511,8 @@ GET /api/v1/routes/me?page=1&size=20
 ---
 
 ## 4.5 경로 수정
+
+상태: `PLANNED`
 
 ```http
 PATCH /api/v1/routes/{route_id}
@@ -511,6 +562,8 @@ PATCH /api/v1/routes/{route_id}
 
 ## 4.6 경로 삭제
 
+상태: `PLANNED`
+
 ```http
 DELETE /api/v1/routes/{route_id}
 ```
@@ -539,6 +592,8 @@ DELETE /api/v1/routes/{route_id}
 # 5. Nearby Route API
 
 ## 5.1 근처 경로 조회
+
+상태: `PLANNED`
 
 ```http
 GET /api/v1/routes/nearby?lat=37.5001&lng=127.0001&radius_m=3000&activity_type=RUN
@@ -581,6 +636,8 @@ GET /api/v1/routes/nearby?lat=37.5001&lng=127.0001&radius_m=3000&activity_type=R
 
 ## 6.1 좋아요
 
+상태: `IMPLEMENTED`
+
 ```http
 POST /api/v1/routes/{route_id}/like
 ```
@@ -608,6 +665,8 @@ POST /api/v1/routes/{route_id}/like
 
 ## 6.2 좋아요 취소
 
+상태: `IMPLEMENTED`
+
 ```http
 DELETE /api/v1/routes/{route_id}/like
 ```
@@ -631,6 +690,8 @@ DELETE /api/v1/routes/{route_id}/like
 # 7. Comment API
 
 ## 7.1 댓글 작성
+
+상태: `IMPLEMENTED`
 
 ```http
 POST /api/v1/routes/{route_id}/comments
@@ -669,6 +730,8 @@ POST /api/v1/routes/{route_id}/comments
 
 ## 7.2 댓글 목록 조회
 
+상태: `IMPLEMENTED`
+
 ```http
 GET /api/v1/routes/{route_id}/comments?page=1&size=20
 ```
@@ -701,7 +764,33 @@ GET /api/v1/routes/{route_id}/comments?page=1&size=20
 
 ---
 
-## 7.3 댓글 삭제
+## 7.3 댓글 수정
+
+상태: `IMPLEMENTED`
+
+```http
+PATCH /api/v1/routes/{route_id}/comments/{comment_id}
+```
+
+### Request
+
+```json
+{
+  "content": "수정한 댓글"
+}
+```
+
+### Policy
+
+- 인증 필수.
+- 작성자만 수정 가능.
+- 빈 내용은 허용하지 않는다.
+
+---
+
+## 7.4 댓글 삭제
+
+상태: `IMPLEMENTED`
 
 ```http
 DELETE /api/v1/routes/{route_id}/comments/{comment_id}
@@ -731,6 +820,8 @@ DELETE /api/v1/routes/{route_id}/comments/{comment_id}
 
 ## 8.1 북마크
 
+상태: `IMPLEMENTED`
+
 ```http
 POST /api/v1/routes/{route_id}/bookmark
 ```
@@ -758,6 +849,8 @@ POST /api/v1/routes/{route_id}/bookmark
 
 ## 8.2 북마크 취소
 
+상태: `IMPLEMENTED`
+
 ```http
 DELETE /api/v1/routes/{route_id}/bookmark
 ```
@@ -779,6 +872,8 @@ DELETE /api/v1/routes/{route_id}/bookmark
 ---
 
 ## 8.3 내 북마크 목록 조회
+
+상태: `IMPLEMENTED`
 
 ```http
 GET /api/v1/bookmarks/me?page=1&size=20
@@ -811,6 +906,8 @@ GET /api/v1/bookmarks/me?page=1&size=20
 # Route Cluster API
 
 ## 유사한 루트 조회
+
+상태: `IMPLEMENTED`
 
 ```http
 GET /api/v1/routes/{route_id}/similar
@@ -846,6 +943,8 @@ Policy
 - 거리 차이 ±15%
 
 ## 동일 Route 실행 기록 조회
+
+상태: `IMPLEMENTED`
 
 ```http
 GET /api/v1/routes/{route_id}/history
@@ -973,4 +1072,6 @@ size = 50
 - [[PROJECT]]
 - [[docs/HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
+- [[docs/source/requirements]]
+- [[docs/source/frontend-backend-contract]]
 - [[todo]]

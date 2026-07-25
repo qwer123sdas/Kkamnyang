@@ -2,9 +2,19 @@
 
 ## Purpose
 
-Frontend와 backend가 공유해야 하는 인증, API, 환경변수, 에러 처리 기준을 한 문서에 고정한다.
+Frontend와 backend가 공유해야 하는 인증, 공통 응답 처리, 환경변수, 계층 경계와 UI 상태 기준을 한 문서에 고정한다.
 
-이 문서는 구현 세부사항을 새로 정의하지 않는다. 기존 `docs/api-spec.md`, task 문서, backend 구현 기준을 frontend 작업자가 확인하기 쉽게 정리한다.
+이 문서는 전체 엔드포인트 목록이나 엔드포인트별 필드를 소유하지 않는다.
+상세 API 계약은 [[docs/source/api-spec]]을 기준으로 하고, 이 문서는 frontend 작업자가 계층 간 통합 규칙을 확인하기 쉽게 정리한다.
+
+## Document Boundary
+
+```text
+전체 엔드포인트와 필드 -> docs/source/api-spec.md
+MVP 기능 범위         -> docs/source/requirements.md
+시스템과 계층 구조    -> docs/source/architecture.md
+계층 간 통합 규칙     -> 이 문서
+```
 
 ## Base URL
 
@@ -108,6 +118,8 @@ Rules:
 ```
 
 ## Core Endpoints
+
+이 절은 frontend 통합의 최소 핵심 흐름만 나열하며 전체 API 목록을 의미하지 않는다.
 
 ### Health
 
@@ -265,16 +277,16 @@ Requires separate task/document approval:
 
 ## Related Documents
 
-```text
-docs/api-spec.md
-docs/db-schema.md
-docs/HANDOFF.md
-docs/task/TASK-021-manual-retest.md
-docs/task/TASK-022-fix-google-login.md
-docs/task/TASK-023-backend-skeleton.md
-docs/task/TASK-024-social-user-identity-stabilization.md
-docs/task/TASK-025-health-metrics-roadmap.md
-docs/task/TASK-026-frontend-backend-integration.md
-docs/task/TASK-027-mobile-manual-qa-regression.md
-docs/task/TASK-028-stitch-ux-ui-direction.md
-```
+- [[docs/source/requirements]]
+- [[docs/source/api-spec]]
+- [[docs/source/db-schema]]
+- [[docs/source/architecture]]
+- [[docs/HANDOFF]]
+- [[docs/task/TASK-021-manual-retest]]
+- [[docs/task/TASK-022-fix-google-login]]
+- [[docs/task/TASK-023-backend-skeleton]]
+- [[docs/task/TASK-024-social-user-identity-stabilization]]
+- [[docs/task/TASK-025-health-metrics-roadmap]]
+- [[docs/task/TASK-026-frontend-backend-integration]]
+- [[docs/task/TASK-027-mobile-manual-qa-regression]]
+- [[docs/task/TASK-028-stitch-ux-ui-direction]]

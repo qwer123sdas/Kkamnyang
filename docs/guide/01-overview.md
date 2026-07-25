@@ -1,58 +1,41 @@
-# 프로젝트 개요
+# 프로젝트 개요 가이드
 
-## 프로젝트
+이 문서는 RouteLog의 상세 명세를 반복하지 않고, 프로젝트 범위와 관련 원본 문서를 빠르게 찾기 위한 진입점으로 사용한다.
 
-- 작업공간 이름: KKamyang
+## 현재 적용 요약
+
 - 제품 이름: RouteLog
-- 목적: GPS 기반 운동 경로 기록 및 공유
+- 현재 MVP 활동 유형: `RUN`
+- 향후 확장 활동 유형: `RIDE`, `HIKE`
+- Task에 명시되지 않은 확장 기능은 현재 범위에 포함하지 않는다.
 
-## MVP 범위
+정확한 범위와 기능 요구사항은 [[docs/source/requirements|요구사항 원문]]을 기준으로 판단한다.
+기술 스택과 시스템 구성은 [[docs/source/architecture|아키텍처 원문]]에서 확인한다.
+프로젝트 전체 금지 사항과 보안 규칙은 [[AGENTS|Agent 작업 규칙]]을 최우선으로 따른다.
 
-MVP는 다음에 집중한다.
-
-- `RUN`
-- GPS 기록
-- 경로 저장 및 표시
-- 경로 피드/상세
-- 프로필과 사용자 식별 기본 기능
-- Task에서 이미 다루는 좋아요, 북마크, 댓글, 경로 기록 기능
-
-향후 활동 유형:
-
-- `RIDE`
-- `HIKE`
-
-향후 활동 유형은 Task에서 범위를 명시적으로 바꾸지 않는 한 후순위로 둔다.
-
-## 기술 스택
-
-- 프론트엔드: React Native, Expo SDK 54
-- 백엔드: FastAPI
-- 데이터베이스: Supabase, PostgreSQL
-- 지도: Google Maps API
-- 스토리지: Supabase Storage
-
-## 문서화 정책
-
-기존 문서는 보존한다.
-새 문서는 다음 역할을 우선한다.
-
-- 인덱스
-- 요약
-- 운영 규칙
-- 원본 문서 링크
-
-보기 좋게 만들기 위한 목적으로만 기존 문서를 다시 쓰지 않는다.
-문서와 코드가 다르면 어느 한쪽을 바꾸기 전에 불일치를 먼저 기록한다.
-
-## 필수 읽기 흐름
+## 작업 시작 전 읽기 순서
 
 ```text
 AGENTS.md
 -> README.md
 -> HANDOFF.md
 -> docs/INDEX.md
--> related feature guide
--> related task document
--> code
+-> 관련 feature 문서
+-> 관련 Task 문서
+-> 관련 source 원문
+-> 코드
 ```
+
+## 변경 시 확인 사항
+
+1. 변경하려는 기능이 현재 MVP와 관련 Task 범위에 포함되는지 확인한다.
+2. 구현 전에 관련 feature 문서와 source 원문을 확인한다.
+3. 요구사항이 바뀌면 guide에 상세 내용을 복사하지 않고 source 원문과 관련 Task를 갱신한다.
+4. 작업 상태와 검증 결과는 HANDOFF 또는 관련 Task 문서에 기록한다.
+
+## 관련 문서
+
+- [[docs/INDEX|문서 인덱스]]
+- [[docs/source/requirements|요구사항 원문]]
+- [[docs/source/architecture|아키텍처 원문]]
+- [[docs/guide/05-decisions|의사결정 인덱스]]

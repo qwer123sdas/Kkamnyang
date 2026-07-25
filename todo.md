@@ -30,6 +30,17 @@
 - [ ] [[docs/task/TASK-037-frontend-common-states]]
 - [ ] [[docs/task/TASK-038-frontend-integration-qa]]
 
+## Source 원본 명세 후속 정리
+
+- [ ] `TASK-001`부터 `TASK-017`까지 남아 있는 이전 문서 경로(`docs/api-spec.md`, `docs/architecture.md`, `docs/db-schema.md`)를 `docs/source/` 기준으로 교정한다.
+- [ ] [[docs/source/api-spec]]의 `PLANNED` API마다 구현 근거 Task 또는 보류·폐기 사유를 연결한다.
+- [ ] `PLANNED` API를 구현 대상으로 확정하기 전 실제 Router와 기존 Task 범위를 다시 검토한다.
+- [ ] [[docs/source/architecture]]에 남아 있는 API 응답, DB 타입, GPS 수치의 상세 복제를 원본 링크 중심으로 축소한다.
+- [ ] [[docs/db/db_dml]]에 혼재된 DDL, DML, 검증 SQL의 역할을 조사하고 별도 Task에서 정리 방안을 확정한다.
+- [ ] [[docs/source/db-schema]], [[docs/db/db_ddl]], [[docs/db/db_dml]] 사이의 컬럼, 타입, FK, 인덱스 정합성을 검증한다.
+- [ ] [[docs/source/design-system]]과 분리된 RouteLog 모바일 디자인 시스템 원문을 TASK-028 및 실제 UI 검증 결과를 기준으로 작성한다.
+- [ ] RouteLog 디자인 원문이 확정되면 Lunit 문서는 `REFERENCE` 자료로 유지할지 `docs/archive-or-legacy/`로 이동할지 결정한다.
+
 ## 이번 문서 반영 범위 제외
 
 - 프론트엔드 구현

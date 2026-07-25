@@ -19,10 +19,10 @@ updated: 2026-07-01
 - [[AGENTS]]
 - [[PROJECT]]
 - [[docs/HANDOFF]]
-- [[docs/architecture]]
-- [[docs/api-spec]]
-- [[docs/db-schema]]
-- [[docs/design-system]]
+- [[docs/source/architecture]]
+- [[docs/source/api-spec]]
+- [[docs/source/db-schema]]
+- [[docs/source/design-system]]
 - [[docs/FRONTEND-BOARD]]
 
 # 작업 범위
@@ -42,7 +42,7 @@ updated: 2026-07-01
 # 완료 조건
 
 - [ ] Screen에서 API를 직접 호출하지 않는다.
-- [ ] 공통 API 응답 처리가 [[docs/api-spec]]와 일치한다.
+- [ ] 공통 API 응답 처리가 [[docs/source/api-spec]]과 일치한다.
 - [ ] TypeScript 오류를 해결했거나 문서화했다.
 - [ ] 변경 파일을 기록했다.
 - [ ] 검증 결과를 기록했다.

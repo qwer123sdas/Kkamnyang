@@ -19,9 +19,9 @@ LLM Wiki 계층은 Codex와 다른 AI 도구가 다음 질문에 빠르게 답�
 ## 적용 범위
 
 - 기본 Wiki 영역: `docs/`
-- 프로젝트 규칙: `AGENTS.md`
-- 현재 인수인계: `HANDOFF.md`, `docs/HANDOFF.md`
-- 참고 아이디어 문서: `LLM-Wiki.md`
+- 프로젝트 규칙:  [[AGENTS]]
+- 현재 인수인계: [[HANDOFF]], [[docs/HANDOFF]]
+- 참고 아이디어 문서: [[LLM-Wiki]]
 
 명시적으로 승인된 Task가 없다면 별도의 `wiki/`, `raw/`, `archive/` 구조를 만들지 않는다.
 
@@ -69,14 +69,14 @@ AI Agent는 Task 범위 안에서 기존 구조에 맞는 문서를 생성하거
 
 ### docs/INDEX.md
 
-`docs/INDEX.md`는 프로젝트 문서 탐색 인덱스다.
+[[docs/INDEX]].md는 프로젝트 문서 탐색 인덱스다.
 
 장기 유지할 문서를 추가할 때는 기존 인덱스에 필요한 링크만 최소로 추가한다.
 서식 통일이나 재분류 목적의 전체 재작성은 하지 않는다.
 
 ### HANDOFF와 Task 문서
 
-`HANDOFF.md`, `docs/HANDOFF.md`, `docs/task/TASK-*.md`는 작업 흐름과 결과를 기록하는 시간순 로그 역할을 한다.
+[[HANDOFF]].md, [[docs/HANDOFF]].md, `docs/task/TASK-*.md`는 작업 흐름과 결과를 기록하는 시간순 로그 역할을 한다.
 
 별도의 `log.md`를 만들지 않는다. 작업 결과는 관련 Task 또는 HANDOFF 문서에 연결되어야 한다.
 
@@ -90,7 +90,7 @@ AI Agent는 Task 범위 안에서 기존 구조에 맞는 문서를 생성하거
 - Task별 발견 사항은 먼저 관련 Task 문서에 기록한다.
 - 장기 운영 규칙은 `docs/guide/`에 기록한다.
 - 프로젝트 의사결정은 `docs/decision/` 또는 `docs/decisions/`에 기록한다.
-- 현재 상태와 인수인계는 `HANDOFF.md` 또는 `docs/HANDOFF.md`에 기록한다.
+- 현재 상태와 인수인계는 [[HANDOFF]].md 또는 [[docs/HANDOFF]].md에 기록한다.
 - 불확실한 내용은 추정하지 않고 불확실성을 표시한다.
 - `.env` 실제 값이나 Secret은 읽거나, 출력하거나, 요약하거나, 문서에 저장하지 않는다.
 - 프로젝트 지식 문서에서는 개인 작업 로그로 향하는 링크를 만들지 않는다.
@@ -120,15 +120,15 @@ AGENTS.md
 
 Codex는 기본적으로 다음 문서만 읽는다.
 
-1. `AGENTS.md`
-2. `HANDOFF.md`
-3. `docs/INDEX.md`
+1. [[AGENTS]].md
+2. [[HANDOFF]].md
+3. [[docs/INDEX]].md
 4. 관련 feature 문서
 5. 관련 task 문서
 
 다음 문서는 필요할 때만 읽는다.
 
-- `docs/guide/05-decisions.md`
+- docs/guide/[[05-decisions]].md
 - `docs/decisions/**`
 - `docs/graph/**`
 - 개인 작업 로그

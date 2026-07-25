@@ -13,30 +13,71 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "obsidian/templates/My_Note Template.md",
+                "file": "docs/INDEX.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "My_Note Template"
+              "title": "INDEX"
             }
           },
           {
-            "id": "714f943e3a2f1f72",
+            "id": "255260bdca18b6f8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "To-Do/2026-07/2026-07-05.md",
+                "file": "docs/source/db-schema.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-07-05"
+              "title": "db-schema"
+            }
+          },
+          {
+            "id": "7f17f7ee0ee4633c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "HANDOFF.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "HANDOFF"
+            }
+          },
+          {
+            "id": "2711cc955261d6cb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/source/api-spec.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "api-spec"
+            }
+          },
+          {
+            "id": "90543c9e5267322b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "To-Do/2026-07/2026-07-07.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026-07-07"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -209,40 +250,40 @@
       "periodic-notes:Open today": false
     }
   },
-  "active": "714f943e3a2f1f72",
+  "active": "6310a7d5604acaff",
   "lastOpenFiles": [
-    "To-Do/2026-07/2026-07-04.md",
-    "To-Do/2026-07/2026-07-05.md",
-    "todo.md",
-    "LLM-Wiki.md",
-    "docs/guide/10-llm-wiki-operations.md",
+    "docs/source/requirements.md",
+    "docs/guide/04-db-schema.md",
+    "docs/guide/03-api-spec.md",
+    "docs/guide/02-architecture.md",
+    "docs/guide/01-overview.md",
+    "HANDOFF.md",
+    "docs/source/db-schema.md",
+    "docs/source/api-spec.md",
+    "docs/INDEX.md",
+    "docs/HANDOFF.md",
     "docs/guide/08-llm-wiki-guide.md",
+    "docs/guide/05-decisions.md",
     "obsidian/templates/My_Note Template.md",
-    "My_Note/principles/요약 프롬프트.md",
-    "My_Note/records/2026/07/2026-07-05_My Notes - AI OS 문서 운영 구조 정리.md",
-    "My_Note/principles/ai-os-doc-rules.md",
+    "docs/source/design-system.md",
+    "docs/source/frontend-backend-contract.md",
+    "docs/db/db_dml.md",
+    "To-Do/2026-07/2026-07-07.md",
+    "LLM-Wiki.md",
+    "AGENTS.md",
+    "docs/01-plan/features/route-feed-backend.plan.md",
+    "README.md",
+    "todo.md",
+    "PROJECT.md",
+    "docs/FRONTEND-BOARD.md",
+    "docs/issue/ISSUE-001-local-development.md",
+    "To-Do/2026-07/2026-07-05.md",
     "My_Note/principles",
     "My_Note/records",
-    "My_Note/무제.md",
     "My_Note/index",
-    "obsidian/templates/To-Do Template.md",
-    "docs/decisions/2026/2026-07.md",
-    "docs/guide/05-decisions.md",
     "My_Note/records/2026/07",
     "My_Note/records/2026",
     "My_Note",
-    "docs/guide/02-architecture.md",
-    "docs/source/requirements.md",
-    "docs/INDEX.md",
-    "docs/decision/DEC-001-frontend-layering.md",
-    "docs/source/frontend-backend-contract.md",
-    "docs/HANDOFF.md",
-    "HANDOFF.md",
-    "docs/source/architecture.md",
-    "docs/feature/profile.md",
-    "docs/feature/route-detail.md",
-    "docs/feature/route-feed.md",
-    "docs/feature/running.md",
     "docs/decisions/2026",
     "docs/decisions",
     "docs/issue",

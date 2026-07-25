@@ -12,8 +12,19 @@ verified: 2026-05-14
 omd: "0.1"
 link:
 ---
-[[TASK-003B-auth-session-fix]]
-# Custom Design System (based on Lunit)
+# Design Reference — Lunit Analysis
+
+> [!WARNING]
+> 상태: `REFERENCE`
+>
+> 이 문서는 RouteLog의 확정 디자인 시스템이 아니다. Lunit 웹사이트를 분석한 시각 참고 자료이며, RouteLog 모바일 UI에 그대로 적용하지 않는다.
+> RouteLog의 현재 UX 범위는 [[docs/task/TASK-028-stitch-ux-ui-direction]]을 참고하고, 실제 디자인 기준은 별도 검증 Task에서 확정해야 한다.
+
+## 문서 경계
+
+- 이 문서가 제공하는 것: 색상, 타이포그래피, 형태와 레이아웃에 대한 외부 참고 분석
+- 이 문서가 확정하지 않는 것: RouteLog 토큰, 모바일 컴포넌트, 접근성 상태, 화면별 UX 계약
+- Task에서 확정되지 않은 외부 브랜드 규칙을 RouteLog 구현 요구사항으로 간주하지 않는다.
 
 ## 1. Visual Theme & Atmosphere
 

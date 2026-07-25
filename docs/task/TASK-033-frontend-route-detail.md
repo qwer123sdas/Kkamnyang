@@ -19,9 +19,9 @@ updated: 2026-07-01
 - [[AGENTS]]
 - [[PROJECT]]
 - [[docs/HANDOFF]]
-- [[docs/architecture]]
-- [[docs/api-spec]]
-- [[docs/design-system]]
+- [[docs/source/architecture]]
+- [[docs/source/api-spec]]
+- [[docs/source/design-system]]
 - [[docs/FRONTEND-BOARD]]
 - [[docs/task/TASK-030-frontend-common-api-types]]
 

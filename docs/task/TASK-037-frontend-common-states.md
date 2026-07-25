@@ -19,9 +19,9 @@ MVP 프론트엔드 화면 전반의 공통 로딩, 빈 상태, 오류 상태 �
 - [[AGENTS]]
 - [[PROJECT]]
 - [[docs/HANDOFF]]
-- [[docs/architecture]]
-- [[docs/api-spec]]
-- [[docs/design-system]]
+- [[docs/source/architecture]]
+- [[docs/source/api-spec]]
+- [[docs/source/design-system]]
 - [[docs/FRONTEND-BOARD]]
 - [[docs/task/TASK-030-frontend-common-api-types]]
 

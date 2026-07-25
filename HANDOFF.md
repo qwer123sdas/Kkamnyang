@@ -6,10 +6,10 @@
 ## 현재 상태
 
 - Obsidian / LLM WIKI 관리는 `docs/` 중심으로 운영한다.
-- 문서 진입점은 `docs/INDEX.md`다.
-- LLM WIKI 운영 규칙은 `docs/guide/08-llm-wiki-guide.md`를 따른다.
+- 문서 진입점은 [[docs/INDEX]].md다.
+- LLM WIKI 운영 규칙은 docs/guide/[[08-llm-wiki-guide]].md를 따른다.
 - graphify 산출물은 `docs/graph/`에 보관한다.
-- 프론트엔드 현재 작업판은 `docs/FRONTEND-BOARD.md`를 사용한다.
+- 프론트엔드 현재 작업판은 docs/[[FRONTEND-BOARD]].md를 사용한다.
 - `docs/todo/current.md`는 현재 만들지 않는다. 프로젝트 전체 TODO 허브가 필요해질 때만 추가한다.
 - 프로젝트 지식 문서에서는 개인 작업 로그로 향하는 링크를 만들지 않는다.
 

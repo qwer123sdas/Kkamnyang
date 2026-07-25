@@ -15,6 +15,28 @@
 
 이 문서에 정의되지 않은 구조 변경은 금지한다.
 
+### 문서 소유 범위
+
+이 문서는 다음 내용을 소유한다.
+
+- 전체 시스템 구성
+- Frontend와 Backend 계층 및 책임
+- 주요 데이터 흐름
+- 기술 선택과 확장 방향
+
+다음 상세 정책은 각 원본 문서가 소유한다.
+
+| 내용 | 원본 |
+|---|---|
+| 현재 MVP 기능 범위 | [[docs/source/requirements]] |
+| API 엔드포인트와 요청·응답 필드 | [[docs/source/api-spec]] |
+| Frontend와 Backend 통합 계약 | [[docs/source/frontend-backend-contract]] |
+| DB 컬럼과 타입 | [[docs/source/db-schema]], [[docs/db/db_ddl]], [[docs/db/db_dml]] |
+| 작업 금지, GPS 수치, 보안 정책 | [[AGENTS]] |
+| UI 디자인 기준 | [[docs/source/design-system]] |
+
+중복된 상세 값이 서로 다르면 위 원본과 최신 검증 Task를 우선하고, 이 문서의 관련 설명을 갱신한다.
+
 ---
 
 # 2. 서비스 개요
@@ -22,7 +44,7 @@
 ## 2.1 서비스명
 
 ```text
-WAYLOG
+RouteLog
 ```
 
 ## 2.2 핵심 기능
@@ -180,6 +202,10 @@ GeoJSON
 # 6. Frontend Architecture
 
 ## 6.1 디렉토리 구조
+
+아래 구조는 계층 책임을 설명하기 위한 논리 구조다.
+실제 파일 경로를 확정하는 목록이 아니며, 작업 시 현재 저장소와 관련 Task를 먼저 확인한다.
+기존 Router 또는 디렉터리 구조는 명시적인 Task 없이 이 예시에 맞춰 변경하지 않는다.
 
 ```text
 src/
@@ -384,6 +410,9 @@ Domain 타입 정의
 
 ## 7.1 디렉토리 구조
 
+아래 구조는 계층 책임을 설명하기 위한 논리 구조다.
+현재 저장소에 없는 파일을 구현된 것으로 간주하지 않으며, 예시에 맞추기 위한 파일 이동이나 Router 변경을 하지 않는다.
+
 ```text
 backend/
 
@@ -528,6 +557,9 @@ GeoJSON 변환
 
 # 8. Database Architecture
 
+이 절은 데이터 계층의 역할과 주요 엔터티 관계만 설명한다.
+정확한 컬럼, 타입, 제약조건과 실행 SQL은 [[docs/source/db-schema]], [[docs/db/db_ddl]], [[docs/db/db_dml]]을 기준으로 한다.
+
 ## 8.1 주요 테이블
 
 ```text
@@ -644,6 +676,9 @@ login_id는 영문 소문자, 숫자, '_'만 허용한다.
 ---
 
 # 10. GPS Recording Architecture
+
+이 절은 GPS 기록 흐름을 설명한다.
+수집 주기와 노이즈 제거 수치가 다를 경우 [[AGENTS]]를 최우선으로 적용한다.
 
 ## 10.1 기록 흐름
 
@@ -932,6 +967,9 @@ UI 상태 반영
 
 # 13. API Communication Rules
 
+이 절은 통신 계층의 방향만 설명한다.
+공통 응답과 엔드포인트별 상세 계약은 [[docs/source/api-spec]]과 [[docs/source/frontend-backend-contract]]을 기준으로 한다.
+
 ## 13.1 공통 응답
 
 ```json
@@ -1038,6 +1076,9 @@ INTERNAL_ERROR
 ---
 
 # 16. Security Rules
+
+이 절은 아키텍처 수준의 보안 방향을 설명한다.
+Secret 처리와 Agent 작업 보안 정책은 [[AGENTS]]를 최우선으로 적용한다.
 
 ## 16.1 인증
 
@@ -1250,27 +1291,15 @@ DM
 
 ---
 
-# 23. 다음 문서
+# 23. 관련 문서
 
-이후 작성할 문서:
-
-```text
-docs/screens/login.md
-docs/screens/record.md
-docs/screens/feed.md
-docs/screens/route-detail.md
-docs/screens/profile.md
-
-docs/task/TASK-001-project-skeleton.md
-docs/task/TASK-002-auth.md
-docs/task/TASK-003-gps-record.md
-docs/task/TASK-004-route-save.md
-```
----
-
-## 관련 문서
-
+- [[AGENTS]]
 - [[PROJECT]]
+- [[docs/source/requirements]]
+- [[docs/source/api-spec]]
+- [[docs/source/frontend-backend-contract]]
+- [[docs/source/db-schema]]
+- [[docs/source/design-system]]
 - [[docs/HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
 - [[todo]]

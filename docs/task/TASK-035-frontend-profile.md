@@ -19,9 +19,9 @@ Profile과 My Routes 프론트엔드 흐름을 확인하고 완성한다.
 - [[AGENTS]]
 - [[PROJECT]]
 - [[docs/HANDOFF]]
-- [[docs/architecture]]
-- [[docs/api-spec]]
-- [[docs/design-system]]
+- [[docs/source/architecture]]
+- [[docs/source/api-spec]]
+- [[docs/source/design-system]]
 - [[docs/FRONTEND-BOARD]]
 - [[docs/task/TASK-030-frontend-common-api-types]]
 

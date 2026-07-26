@@ -40,7 +40,7 @@ export function filterGPSNoise(points: RecordedGeoPoint[]) {
 
     const distanceMeters = calculateDistanceMeters(previousPoint, point);
 
-    if (distanceMeters < GPS_MIN_DISTANCE_M) {
+    if (distanceMeters <= GPS_MIN_DISTANCE_M) {
       return filteredPoints;
     }
 

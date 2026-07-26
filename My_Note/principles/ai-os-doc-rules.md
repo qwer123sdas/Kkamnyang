@@ -249,15 +249,17 @@ My Notes는 길어질 수 있다.
 
 ## 5. My Notes 운영 구조
 
-My Notes는 다음 3층 구조로 관리한다.
+My Note는 다음 3층 구조를 기준으로 관리한다.
 
 ```md
-My Notes/
+My_Note/
 ├─ index/
 │  └─ 2026-07.md
 │
 ├─ records/
-│  └─ 2026-07-05-ai-os-doc-system.md
+│  └─ YYYY/
+│     └─ MM/
+│        └─ YYYY-MM-DD_제목.md
 │
 └─ principles/
    └─ ai-os-doc-rules.md
@@ -280,6 +282,9 @@ principles/
 - 반복 적용할 원칙
 - 짧고 안정적으로 유지한다
 ```
+
+`records/`와 `principles/`는 기본 영역이다.
+`index/`는 기록이 늘어나 월간 요약이 필요해질 때 생성하는 선택 영역이며, 빈 구조를 유지하기 위해 미리 만들지 않는다.
 
 ---
 

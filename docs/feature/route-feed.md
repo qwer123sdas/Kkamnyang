@@ -36,3 +36,8 @@ backend/api/route_api.py
 - `../02-design/features/route-feed-backend.design.md`
 - `../03-analysis/route-feed-backend.analysis.md`
 - `../04-report/route-feed-backend.report.md`
+
+## 변경 금지 메모
+
+- `RUN`, `PUBLIC`, 최신순이라는 MVP 경계를 Task 없이 확장하지 않는다.
+- Screen에서 API를 직접 호출하거나 API 응답 구조를 변경하지 않는다.

@@ -120,7 +120,7 @@ backend/repositories/route_repository.py
 backend/tests/test_route_feed.py
 backend/tests/test_route_repository.py
 docs/task/TASK-019-device-test.md
-docs/HANDOFF.md
+docs/archive-or-legacy/HANDOFF-history.md
 ```
 
 ### Commands

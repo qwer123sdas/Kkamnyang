@@ -14,6 +14,10 @@ link:
 ---
 # Design Reference — Lunit Analysis
 
+> 상태: `REFERENCE`
+>
+> 이 문서는 외부 Lunit 자료 조사 결과를 보존한다. RouteLog 모바일 UI 구현 기준은 [[docs/source/routelog-design-system]]을 사용한다.
+
 > [!WARNING]
 > 상태: `REFERENCE`
 >
@@ -351,6 +355,6 @@ Total target length: 250-400 lines. Keep sections concise and actionable.
 ## 관련 문서
 
 - [[PROJECT]]
-- [[docs/HANDOFF]]
+- [[HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
 - [[todo]]

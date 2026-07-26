@@ -562,56 +562,20 @@ GeoJSON 변환
 
 ## 8.1 주요 테이블
 
-```text
-users
-routes
-activities
-route_likes
-route_comments
-route_bookmarks
-```
+사용자, 경로, 활동, 좋아요, 댓글, 북마크 및 Route Cluster 엔터티로 구성한다.
+정확한 테이블 목록은 [[docs/source/db-schema]]을 따른다.
 
 ## 8.2 PK 정책
 
-```text
-users.user_id = UUID
-
-routes.route_id = BIGSERIAL
-
-activities.activity_id = BIGSERIAL
-
-route_likes.like_id = BIGSERIAL
-
-route_comments.comment_id = BIGSERIAL
-
-route_bookmarks.bookmark_id = BIGSERIAL
-```
+PK 타입과 테이블별 키 이름은 [[docs/source/db-schema]]에서 관리한다.
 
 ## 8.3 Audit 정책
 
-모든 테이블은 아래 컬럼을 가진다.
-
-```text
-created_at
-created_by
-updated_at
-updated_by
-```
+모든 테이블은 프로젝트 Audit 정책을 적용한다. 컬럼과 actor 규칙은 [[docs/source/db-schema]]을 따른다.
 
 ## 8.4 Soft Delete 정책
 
-실제 DELETE는 금지한다.
-
-```text
-deleted_yn
-deleted_at
-```
-
-조회 시 항상 조건 추가:
-
-```sql
-deleted_yn = 'N'
-```
+물리 삭제 대신 Soft Delete를 적용한다. 정확한 컬럼과 조회 조건은 [[docs/source/db-schema]]을 따른다.
 
 ---
 
@@ -730,30 +694,16 @@ activities 업데이트
 
 ## 10.2 GPS 수집 정책
 
-```text
-RUN  = 3초
-```
+활동별 수집 주기는 [[AGENTS]]의 GPS Rules를 따른다.
 
 ## 10.3 GPS 노이즈 제거 정책
 
-제거 조건:
-
-```text
-속도 > 40km/h
-거리 변화 < 5m
-좌표 정확도 부족
-```
+속도와 거리 변화 기준은 [[AGENTS]]의 GPS Rules를 따른다.
+좌표 정확도 처리는 플랫폼 지원 범위와 검증된 Task 결과를 따른다.
 
 ## 10.4 저장 데이터
 
-```text
-encoded_polyline
-route_geojson
-start_point
-end_point
-distance_km
-duration_sec
-```
+저장 필드와 요청 계약은 [[docs/source/api-spec]]과 [[docs/source/db-schema]]을 따른다.
 
 ---
 
@@ -816,15 +766,7 @@ route_clusters
 유사한 경로 그룹
 
 
-유사도 계산:
-
-1. activity_type 동일
-
-2. 시작점 반경 300m
-
-3. 종료점 반경 300m
-
-4. 거리 차이 ±15%
+Route Cluster 판정 수치는 [[AGENTS]]의 Route Similarity Rules를 따른다.
 
 ## Route History Architecture
 
@@ -972,24 +914,11 @@ UI 상태 반영
 
 ## 13.1 공통 응답
 
-```json
-{
-  "success": true,
-  "data": {},
-  "message": null
-}
-```
+성공 envelope는 [[docs/source/api-spec]]에서 관리한다.
 
 ## 13.2 공통 에러
 
-```json
-{
-  "success": false,
-  "data": null,
-  "message": "error message",
-  "error_code": "ERROR_CODE"
-}
-```
+오류 envelope와 오류 코드는 [[docs/source/api-spec]]에서 관리한다.
 
 ## 13.3 API 호출 위치
 
@@ -1300,6 +1229,6 @@ DM
 - [[docs/source/frontend-backend-contract]]
 - [[docs/source/db-schema]]
 - [[docs/source/design-system]]
-- [[docs/HANDOFF]]
+- [[HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
 - [[todo]]

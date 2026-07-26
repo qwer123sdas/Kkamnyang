@@ -1,13 +1,13 @@
 ---
 id: TASK-035
 title: 프론트엔드 Profile 및 My Routes
-status: ready
+status: completed
 area: frontend
 feature: profile
 priority: medium
 depends_on: [TASK-030, TASK-031]
 created: 2026-07-01
-updated: 2026-07-01
+updated: 2026-07-26
 ---
 
 # 목적
@@ -18,7 +18,7 @@ Profile과 My Routes 프론트엔드 흐름을 확인하고 완성한다.
 
 - [[AGENTS]]
 - [[PROJECT]]
-- [[docs/HANDOFF]]
+- [[docs/archive-or-legacy/HANDOFF-history]]
 - [[docs/source/architecture]]
 - [[docs/source/api-spec]]
 - [[docs/source/design-system]]
@@ -27,10 +27,10 @@ Profile과 My Routes 프론트엔드 흐름을 확인하고 완성한다.
 
 # 작업 범위
 
-- [ ] Profile 응답 타입을 확인한다.
-- [ ] `users/me` 사용 흐름을 확인한다.
-- [ ] My Routes Service와 Hook을 확인한다.
-- [ ] 로딩, 빈 상태, 오류, 성공 UI 상태를 확인한다.
+- [x] Profile 응답 타입을 확인한다.
+- [x] `users/me` 사용 흐름을 확인한다.
+- [x] My Routes Service와 Hook을 확인한다.
+- [x] 로딩, 빈 상태, 오류, 성공 UI 상태를 확인한다.
 
 # 제외 범위
 
@@ -38,21 +38,34 @@ Profile과 My Routes 프론트엔드 흐름을 확인하고 완성한다.
 - 계정 삭제
 - 인증 Provider 관리
 
+# 실행 명령
+
+```powershell
+npx.cmd tsc --noEmit
+python -m pytest backend/tests
+```
+
 # 완료 조건
 
-- [ ] Profile과 My Routes 데이터가 Service와 Hook 계층을 통해 로드된다.
-- [ ] 인증 세션 접근이 기존 규칙을 따른다.
-- [ ] 변경 파일을 기록했다.
-- [ ] 검증 결과를 기록했다.
+- [x] Profile과 My Routes 데이터가 Service와 Hook 계층을 통해 로드된다.
+- [x] 인증 세션 접근이 기존 규칙을 따른다.
+- [x] 변경 파일을 기록했다.
+- [x] 검증 결과를 기록했다.
 
 # 변경 파일
 
-- 시작 전
+- `kkamyang-app/src/components/common/AsyncStateMessage.tsx`
+- `kkamyang-app/src/screens/profile/ProfileScreen.tsx`
+- `kkamyang-app/src/screens/route/MyRoutesScreen.tsx`
+- `docs/task/TASK-035-frontend-profile.md`
 
 # 검증 결과
 
-- 미검증
+- `npx.cmd tsc --noEmit`: 통과
+- `python -m pytest backend/tests`: 57 passed, 131 warnings
+- `/users/me` 공통 응답 자동화 테스트 통과
+- Profile과 My Routes 로딩/빈 상태/오류 재시도 흐름 확인
 
 # 남은 이슈
 
-- 구현 전에 현재 화면 스켈레톤과 API 지원 범위를 비교해야 한다.
+- 실제 인증 세션 데이터 표시는 TASK-038 외부 환경 차단 항목으로 남는다.

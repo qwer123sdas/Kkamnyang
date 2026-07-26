@@ -59,9 +59,9 @@ src/constants/map.ts
 ```text
 AGENTS.md
 
-docs/architecture.md
+docs/source/architecture.md
 
-docs/api-spec.md
+docs/source/api-spec.md
 ```
 
 금지:

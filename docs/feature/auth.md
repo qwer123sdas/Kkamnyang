@@ -40,8 +40,9 @@ backend/api/user_api.py
 - `../task/TASK-022-fix-google-login.md`
 - `../task/TASK-024-social-user-identity-stabilization.md`
 
-## 메모
+## 변경 금지 메모
 
 - `login_id`는 고유하며 변경할 수 없다.
 - `login_id` 정규식: `^[a-z0-9_]{4,30}$`
 - 실제 인증 토큰이나 환경변수 값을 출력하지 않는다.
+- Task 범위 없이 인증 Provider 정책, API 응답 또는 Router를 변경하지 않는다.

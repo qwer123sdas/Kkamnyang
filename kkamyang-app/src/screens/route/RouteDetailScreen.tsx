@@ -4,6 +4,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { CommentInput } from "../../components/route/CommentInput";
 import { CommentList } from "../../components/route/CommentList";
+import { AsyncStateMessage } from "../../components/common/AsyncStateMessage";
 import { RouteDetailInfo } from "../../components/route/RouteDetailInfo";
 import { useRouteComments } from "../../hooks/useRouteComments";
 import { useRouteDetail } from "../../hooks/useRouteDetail";
@@ -29,6 +30,7 @@ export default function RouteDetailScreen() {
     isBookmarkUpdating,
     isLikeUpdating,
     isLoading,
+    refresh,
     route: routeDetail,
     toggleBookmark,
     toggleLike,
@@ -53,8 +55,10 @@ export default function RouteDetailScreen() {
   return (
     <ScrollView>
       <Text>Route Detail Screen</Text>
-      {isLoading ? <Text>Loading route</Text> : null}
-      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      {isLoading ? <AsyncStateMessage message="Loading route" /> : null}
+      {errorMessage ? (
+        <AsyncStateMessage message={errorMessage} onRetry={() => void refresh()} />
+      ) : null}
       {routeDetail ? (
         <RouteDetailInfo
           isBookmarkUpdating={isBookmarkUpdating}
@@ -98,7 +102,7 @@ export default function RouteDetailScreen() {
       )}
       {!isLoading && !errorMessage && !routeDetail ? (
         <View>
-          <Text>Route detail is not available.</Text>
+          <AsyncStateMessage message="Route detail is not available." />
         </View>
       ) : null}
     </ScrollView>

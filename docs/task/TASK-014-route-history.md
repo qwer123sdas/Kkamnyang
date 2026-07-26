@@ -18,7 +18,7 @@
 kkamyang-app/src/screens/route/RouteFeedScreen.tsx
 kkamyang-app/src/components/route/RouteDetailInfo.tsx
 kkamyang-app/src/screens/route/RouteDetailScreen.tsx
-docs/HANDOFF.md
+docs/archive-or-legacy/HANDOFF-history.md
 docs/task/TASK-014-route-history.md
 ```
 

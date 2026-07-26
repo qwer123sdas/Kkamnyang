@@ -99,11 +99,11 @@ AGENTS.md
 
 docs/requirements.md
 
-docs/architecture.md
+docs/source/architecture.md
 
-docs/api-spec.md
+docs/source/api-spec.md
 
-docs/db-schema.md
+docs/source/db-schema.md
 ```
 
 ---

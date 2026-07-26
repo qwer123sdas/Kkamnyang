@@ -1,5 +1,6 @@
 import type { ActivityType } from "../constants/activity";
 import type { RouteHistoryActivity } from "./activity";
+import type { PaginatedResponse } from "./api";
 import type { GeoPoint, RouteGeoJson } from "./geo";
 import type { User } from "./user";
 
@@ -97,12 +98,7 @@ export type RouteCommentDeleteResponse = {
   route_id: number;
 };
 
-export type RouteCommentsResponse = {
-  items: RouteComment[];
-  page: number;
-  size: number;
-  has_next: boolean;
-};
+export type RouteCommentsResponse = PaginatedResponse<RouteComment>;
 
 export type SimilarRoute = {
   route_id: number;
@@ -116,12 +112,7 @@ export type RouteClusterResponse = {
   items: SimilarRoute[];
 };
 
-export type RouteHistoryResponse = {
-  items: RouteHistoryActivity[];
-  page: number;
-  size: number;
-  has_next: boolean;
-};
+export type RouteHistoryResponse = PaginatedResponse<RouteHistoryActivity>;
 
 export type RouteFeedParams = {
   page: number;
@@ -129,23 +120,8 @@ export type RouteFeedParams = {
   activity_type: ActivityType;
 };
 
-export type RouteFeedResponse = {
-  items: RouteFeedItem[];
-  page: number;
-  size: number;
-  has_next: boolean;
-};
+export type RouteFeedResponse = PaginatedResponse<RouteFeedItem>;
 
-export type MyRoutesResponse = {
-  items: MyRouteItem[];
-  page: number;
-  size: number;
-  has_next: boolean;
-};
+export type MyRoutesResponse = PaginatedResponse<MyRouteItem>;
 
-export type BookmarksResponse = {
-  items: BookmarkRouteItem[];
-  page: number;
-  size: number;
-  has_next: boolean;
-};
+export type BookmarksResponse = PaginatedResponse<BookmarkRouteItem>;

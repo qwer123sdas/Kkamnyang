@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { RouteCard } from "../../components/route/RouteCard";
+import { AsyncStateMessage } from "../../components/common/AsyncStateMessage";
 import { useBookmarks } from "../../hooks/useBookmarks";
 import type { MainStackParamList } from "../../navigation/MainNavigator";
 import type { BookmarkRouteItem } from "../../types/route";
@@ -35,12 +36,18 @@ export default function BookmarkScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Text>Bookmark Screen</Text>
-      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      {errorMessage ? (
+        <AsyncStateMessage message={errorMessage} onRetry={() => void refresh()} />
+      ) : null}
       <FlatList
         data={items}
         keyExtractor={(item) => String(item.route_id)}
         ListEmptyComponent={
-          isLoading ? <Text>Loading bookmarks</Text> : <Text>No bookmarks</Text>
+          errorMessage ? null : isLoading ? (
+            <AsyncStateMessage message="Loading bookmarks" />
+          ) : (
+            <AsyncStateMessage message="No bookmarks" />
+          )
         }
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}

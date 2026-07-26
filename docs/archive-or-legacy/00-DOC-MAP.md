@@ -1,5 +1,8 @@
 # 문서 맵
 
+> [!WARNING]
+> 이 문서는 과거 시점의 구조를 보존한 기록이다. 링크와 경로가 현재 구조와 일치하지 않을 수 있으며, 현재 기준은 [[docs/INDEX]]를 따른다.
+
 이 문서는 RouteLog 문서와 코드의 위치를 빠르게 찾기 위한 색인이다.
 기존 문서의 원문을 대체하지 않는다.
 
@@ -16,7 +19,8 @@
 | Frontend/Backend contract | `docs/frontend-backend-contract.md` | 프론트/백엔드 연동 계약 |
 | DB schema | `docs/db-schema.md` | DB 구조 요약 |
 | Design system | `docs/design-system.md` | UI 스타일과 컴포넌트 방향 |
-| Handoff | `docs/HANDOFF.md` | 최근 작업 상태와 인수인계 |
+| Handoff | `HANDOFF.md` | 현재 작업 상태와 인수인계 |
+| Handoff history | `docs/archive-or-legacy/HANDOFF-history.md` | 과거 상세 인수인계와 검증 결과 |
 
 ## 2. Task 문서
 

@@ -14,3 +14,10 @@ export type ApiErrorResponse = {
 };
 
 export type ApiResponse<TData> = ApiSuccessResponse<TData> | ApiErrorResponse;
+
+export type PaginatedResponse<TItem> = {
+  items: TItem[];
+  page: number;
+  size: number;
+  has_next: boolean;
+};

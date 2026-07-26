@@ -14,6 +14,9 @@
 문서와 SQL이 다르면 임의로 스키마를 변경하지 않고 관련 Task에 불일치를 기록한다.
 승인된 DB 변경만 이 문서와 관련 SQL에 함께 반영한다.
 
+2026-07-26 정적 정합성 감사 결과와 문서 분리 결정은 [[docs/task/TASK-039-db-document-consistency]]에서 확인한다.
+현재 SQL에는 기준 스키마와 증분/QA SQL 중복 및 PostGIS 스키마 표기 차이가 있으므로 실제 DB 확인 없이 재실행하지 않는다.
+
 ## 1. 공통 규칙
 
 ### DB
@@ -121,6 +124,6 @@ deleted_yn default 'N'
 - [[docs/source/architecture]]
 - [[docs/db/db_ddl]]
 - [[docs/db/db_dml]]
-- [[docs/HANDOFF]]
+- [[HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
 - [[todo]]

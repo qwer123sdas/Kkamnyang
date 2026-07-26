@@ -281,7 +281,7 @@ Requires separate task/document approval:
 - [[docs/source/api-spec]]
 - [[docs/source/db-schema]]
 - [[docs/source/architecture]]
-- [[docs/HANDOFF]]
+- [[HANDOFF]]
 - [[docs/task/TASK-021-manual-retest]]
 - [[docs/task/TASK-022-fix-google-login]]
 - [[docs/task/TASK-023-backend-skeleton]]

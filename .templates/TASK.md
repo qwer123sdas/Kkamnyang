@@ -16,12 +16,22 @@ updated:
 
 - [[AGENTS]]
 - [[PROJECT]]
-- [[docs/HANDOFF]]
-- [[docs/architecture]]
-- [[docs/api-spec]]
-- [[docs/db-schema]]
-- [[docs/design-system]]
+- [[HANDOFF]]
+- [[docs/source/architecture]]
+- [[docs/source/api-spec]]
+- [[docs/source/db-schema]]
+- [[docs/source/routelog-design-system]]
 - [[docs/FRONTEND-BOARD]]
+
+# 상태값
+
+```text
+draft
+ready
+in-progress
+completed
+completed-with-blockers
+```
 
 # 작업 범위
 

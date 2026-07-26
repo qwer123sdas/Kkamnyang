@@ -55,3 +55,8 @@ backend/api/route_api.py
 2. 시작점이 반경 300m 이내다.
 3. 종료점이 반경 300m 이내다.
 4. 거리 차이가 ±15% 이내다.
+
+## 변경 금지 메모
+
+- Route Cluster 및 Activity 기반 History 규칙을 Task 없이 변경하지 않는다.
+- API 응답, Router, DB 스키마를 기능 문서만 근거로 변경하지 않는다.

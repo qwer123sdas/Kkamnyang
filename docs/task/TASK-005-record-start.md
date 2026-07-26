@@ -54,8 +54,8 @@ Route 생성
 
 ```text
 AGENTS.md
-docs/api-spec.md
-docs/architecture.md
+docs/source/api-spec.md
+docs/source/architecture.md
 ```
 
 금지:

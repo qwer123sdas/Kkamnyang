@@ -74,6 +74,8 @@ GET /api/v1/health
 
 상태: `PLANNED`
 
+근거: 현재 Router에 `/auth/oauth`가 없다. Google OAuth는 Supabase 클라이언트 흐름으로 처리하며, 별도 백엔드 OAuth endpoint 도입은 [[docs/task/TASK-031-frontend-auth-flow]] 범위에서 제외되어 보류한다.
+
 ```http
 POST /api/v1/auth/oauth
 ```
@@ -286,6 +288,8 @@ POST /api/v1/activities/{activity_id}/finish
 
 상태: `PLANNED`
 
+근거: 현재 Router에 `/activities/me`가 없고 기존 TASK-005~007은 시작·종료만 구현했다. 별도 조회 요구가 확정될 때 신규 Task로 검토한다.
+
 ```http
 GET /api/v1/activities/me?page=1&size=20
 ```
@@ -323,6 +327,8 @@ GET /api/v1/activities/me?page=1&size=20
 ## 4.1 경로 생성
 
 상태: `PLANNED`
+
+근거: 현재 Router는 활동 종료 과정에서만 Route를 생성한다. 활동 없는 수동 Route 생성은 MVP 범위가 아니므로 보류한다.
 
 활동 기록 없이 수동으로 경로를 저장할 때 사용한다.
 
@@ -514,6 +520,8 @@ GET /api/v1/routes/me?page=1&size=20
 
 상태: `PLANNED`
 
+근거: 현재 Router에 Route 수정 endpoint가 없고 TASK-009~017 및 TASK-030~038 범위에도 포함되지 않는다. MVP 핵심 흐름 검증 후 별도 Task로 검토한다.
+
 ```http
 PATCH /api/v1/routes/{route_id}
 ```
@@ -564,6 +572,8 @@ PATCH /api/v1/routes/{route_id}
 
 상태: `PLANNED`
 
+근거: 현재 Router에 Route 삭제 endpoint가 없고 기존 Task는 삭제 구현을 승인하지 않았다. Soft Delete 정책을 유지하되 구현은 별도 Task 승인 전까지 보류한다.
+
 ```http
 DELETE /api/v1/routes/{route_id}
 ```
@@ -594,6 +604,8 @@ DELETE /api/v1/routes/{route_id}
 ## 5.1 근처 경로 조회
 
 상태: `PLANNED`
+
+근거: 현재 Router에 `/routes/nearby`가 없다. TASK-032의 제외 범위이며 추천·근처 경로 요구가 확정될 때 별도 Task로 검토한다.
 
 ```http
 GET /api/v1/routes/nearby?lat=37.5001&lng=127.0001&radius_m=3000&activity_type=RUN
@@ -1070,7 +1082,7 @@ size = 50
 ## 관련 문서
 
 - [[PROJECT]]
-- [[docs/HANDOFF]]
+- [[HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
 - [[docs/source/requirements]]
 - [[docs/source/frontend-backend-contract]]

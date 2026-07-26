@@ -48,3 +48,9 @@ backend/api/route_api.py
 - `../task/TASK-015-profile.md`
 - `../task/TASK-016-my-routes.md`
 - `../task/TASK-017-bookmarks.md`
+
+## 변경 금지 메모
+
+- Profile, My Routes, Bookmarks Hook을 전역 인증 상태에 구독시키지 않는다.
+- 작업 시점에 `authService.getSession()`으로 세션을 확인하는 기존 흐름을 유지한다.
+- 프로필 이미지 업로드와 계정 관리는 별도 Task 전까지 추가하지 않는다.

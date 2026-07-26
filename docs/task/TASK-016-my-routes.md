@@ -116,7 +116,7 @@ src/navigation/MainNavigator.tsx
 GET /api/v1/routes/me?page=1&size=20
 ```
 
-Response는 docs/api-spec.md를 따른다.
+Response는 docs/source/api-spec.md를 따른다.
 
 ---
 

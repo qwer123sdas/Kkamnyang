@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { RouteCard } from "../../components/route/RouteCard";
+import { AsyncStateMessage } from "../../components/common/AsyncStateMessage";
 import { useMyRoutes } from "../../hooks/useMyRoutes";
 import type { MainStackParamList } from "../../navigation/MainNavigator";
 import type { MyRouteItem } from "../../types/route";
@@ -35,12 +36,18 @@ export default function MyRoutesScreen() {
   return (
     <View style={{ flex: 1 }}>
       <Text>My Routes Screen</Text>
-      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      {errorMessage ? (
+        <AsyncStateMessage message={errorMessage} onRetry={() => void refresh()} />
+      ) : null}
       <FlatList
         data={items}
         keyExtractor={(item) => String(item.route_id)}
         ListEmptyComponent={
-          isLoading ? <Text>Loading routes</Text> : <Text>No routes</Text>
+          errorMessage ? null : isLoading ? (
+            <AsyncStateMessage message="Loading routes" />
+          ) : (
+            <AsyncStateMessage message="No routes" />
+          )
         }
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}

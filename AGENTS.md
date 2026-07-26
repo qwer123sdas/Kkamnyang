@@ -237,6 +237,6 @@ AI는 Task 문서에 없는 임의 명령을 추가하지 않는다.
 ## 관련 문서
 
 - [[PROJECT]]
-- [[docs/HANDOFF]]
+- [[HANDOFF]]
 - [[docs/FRONTEND-BOARD]]
 - [[todo]]

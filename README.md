@@ -9,10 +9,10 @@ KKamyang은 GPS 기반 러닝 기록 및 경로 공유 앱 RouteLog의 프로젝
 
 먼저 다음 문서를 읽는다.
 
-1. `AGENTS.md`
-2. `HANDOFF.md`
-3. `docs/INDEX.md`
-4. `docs/guide/08-llm-wiki-guide.md`
+1. [[AGENTS]]
+2. [[HANDOFF]]
+3. [[docs/INDEX]]
+4. [[docs/guide/08-llm-wiki-guide]]
 5. 관련 `docs/task/TASK-*.md`
 
 ## 문서 구조

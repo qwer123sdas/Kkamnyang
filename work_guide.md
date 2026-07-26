@@ -1,162 +1,57 @@
-# 문서 세트
-project-root/
+# RouteLog 작업 원칙 요약
 
-docs/
+이 문서는 RouteLog 작업의 최소 진입 경로와 작업 경계를 요약한다.
+상세 기준은 링크된 현재 문서를 따르며, 작업 이력이나 임시 실행 기록을 이 문서에 누적하지 않는다.
 
- ├─ vision.md
- ├─ requirements.md
- ├─ architecture.md
- ├─ db-schema.md
- ├─ api-spec.md
- ├─ screen/
- │     ├─ login.md
- │     ├─ record.md
- │     ├─ route-feed.md
- │     └─ profile.md
- │
- └─ task/
+## 문서 읽기 순서
 
-AGENTS.md
+1. [[AGENTS]]
+2. [[HANDOFF]]
+3. [[docs/INDEX]]
+4. 관련 `docs/feature/*.md`
+5. 관련 `docs/task/TASK-*.md`
+6. 필요한 `docs/source/*.md`와 코드
 
-# Vision
-## 서비스 목표
+## 문서 역할
 
-GPS 기반 운동 경로 기록/공유 앱
+- [[PROJECT]]: 프로젝트 범위와 핵심 작업 순서
+- [[HANDOFF]]: 현재 상태, 다음 작업, 차단 사항
+- [[docs/INDEX]]: 프로젝트 문서의 최상위 탐색 인덱스
+- `docs/guide/`: 현재 적용 요약과 작업 절차
+- `docs/source/`: 요구사항, API, DB 등 상세 판단 기준
+- `docs/feature/`: 기능별 탐색 경로와 변경 경계
+- `docs/task/`: 승인된 작업 범위, 실행 명령, 검증 결과
+- `docs/decisions/`: 장기적으로 보존할 결정과 이유
+- `docs/archive-or-legacy/`: 현재 기준으로 사용하지 않는 과거 기록
 
-사용자 기능:
+## 구현 흐름
 
-- 러닝
+Frontend:
 
-핵심 가치:
+```text
+Screen -> Hook -> Service -> apiClient -> Backend API
+```
 
-1. 기록
-2. 저장
-3. 공유
-4. 커뮤니티
+Backend:
 
-비핵심:
+```text
+API -> Service -> Repository -> Database
+```
 
-- 광고
-- 결제
-- 실시간 채팅
-- 추천 AI
+## 작업 경계
 
-#작업순서
-1. 문서 작성
+- 명시된 Task 범위 안에서만 코드와 문서를 변경한다.
+- API 응답, DB 스키마, Router, 상태관리 구조를 임의로 변경하지 않는다.
+- 라이브러리를 임의로 추가하지 않는다.
+- 프로젝트 생성, 패키지 설치, 실행 명령은 관련 Task 문서에 기록된 범위만 사용한다.
+- `.env`와 `EXPO_PUBLIC_*`의 실제 값을 읽거나 출력하지 않는다.
+- 프로젝트 지식과 `My_Note/`의 개인 기록을 분리한다.
 
-↓
+## 현재 작업 확인
 
-2. AGENTS.md 작성
+- 프로젝트 현재 상태: [[HANDOFF]]
+- 프론트엔드 상태: [[docs/FRONTEND-BOARD]]
+- 장기 결정: [[docs/guide/05-decisions]]
+- LLM Wiki 운영 규칙: [[docs/guide/08-llm-wiki-guide]]
 
-↓
-
-3. Expo Skeleton 생성
-
-↓
-
-4. 화면 Routing
-
-↓
-
-5. GPS Hook
-
-↓
-
-6. Map 화면
-
-↓
-
-7. Polyline
-
-↓
-
-8. Supabase 연결
-
-↓
-
-9. Feed
-
-↓
-
-10. Community 기능
-
-# 체크리스트
-□ vision.md 작성
-
-□ requirements.md 작성
-
-□ architecture.md 작성
-
-□ db-schema.md 작성
-
-□ api-spec.md 작성
-
-□ AGENTS.md 작성
-
-# 기술
-□ Expo 생성
-
-□ Supabase 프로젝트 생성
-
-□ Google API Key 발급
-
-□ 환경변수 분리
-
-□ Git Repository 생성
-
-□ 브랜치 전략 정의
-
-# 하네스
-□ 금지사항 정의
-
-□ 응답 형식 정의
-
-□ 작업 단위 정의
-
-□ 검증 기준 정의
-
-□ 파일 수정 범위 정의
-
-# GPS
-□ 위치 수집 주기 결정
-
-□ 노이즈 정책 결정
-
-□ Polyline 정책 결정
-
-□ 거리 계산 방식 결정
-
----
-# 2026.05.27
-    cloudflared는 Cloudflare가 제공하는 터널 실행 도구입니다. 내 PC에서 실행 중인 로컬 서버를 인터넷에서 접근 가능한 임시 HTTPS 주소로 연결해 줍니다.
-
-  예를 들어 현재 구조는 대략 이렇습니다.
-
-cloudflared tunnel --url http://localhost:8000
-
-  휴대폰 앱/브라우저
-          ↓ HTTPS
-  https://xxxx.trycloudflare.com
-          ↓ Cloudflare 터널
-  내 PC의 cloudflared
-          ↓ HTTP
-  http://localhost:8000
-          ↓
-  FastAPI 백엔드
-
-  3. 변경 이유
-     FastAPI는 지금 직접 HTTPS 서버로 실행 중인 것이 아닙니다. 실제 백엔드는 여전히 아래 주소에서 HTTP로 떠 있습니다.
-
-  http://localhost:8000
-
-  대신 cloudflared가 바깥에서는 HTTPS 주소를 제공하고, 그 요청을 내 PC의 http://localhost:8000으로 전달합니다. 그래서 Android 앱이 http: cleartext 요청을 하지 않고 https: 요청을 하게 만들 수 있습니다.
-
-  4. 테스트 방법
-     당신이 한 일은 다음과 같습니다.
-  5. cloudflared를 설치했다.
-  6. 로컬 백엔드 http://localhost:8000을 대상으로 터널을 열었다.
-  7. Cloudflare가 https://xxxx.trycloudflare.com 형태의 임시 HTTPS 주소를 발급했다.
-  8. 휴대폰에서 그 HTTPS 주소로 접속했다.
-  9. 요청이 Cloudflare를 거쳐 내 PC의 FastAPI 백엔드까지 전달되는 것을 확인했다.
-
-  이제 이 주소를 앱의 API base URL로 쓰면 Android 앱 입장에서는 HTTP가 아니라 HTTPS API를 호출하게 됩니다.
+오래된 구조나 과거 작업을 확인해야 할 때만 `docs/archive-or-legacy/`를 참고한다.

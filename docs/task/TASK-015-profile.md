@@ -110,7 +110,7 @@ src/services/authService.ts
 GET /api/v1/users/me
 ```
 
-Response는 docs/api-spec.md를 따른다.
+Response는 docs/source/api-spec.md를 따른다.
 
 ---
 

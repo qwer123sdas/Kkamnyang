@@ -8,14 +8,14 @@ Obsidian에서 상위 문서인 이 파일을 열었을 때 하위 문서로 바
 
 - [[README|루트 README]] : README
 - [[HANDOFF|루트 HANDOFF]] : HANDOFF
-- [[AGENTS|Agent 규칙]] : PROJECT
-- [[work_guide|작업 가이드]] : work_guide
-- [[docs/HANDOFF|상세 인수인계 이력]] : docs/HANDOFF
+- [[AGENTS|Agent 규칙]] : AGENTS
+- [[work_guide|작업 원칙 요약]] : 현행 문서 체계와 작업 경계를 안내하는 루트 문서
+- [[docs/archive-or-legacy/HANDOFF-history|과거 상세 인수인계 이력]] : 보관 문서
 
 ## 1.1 HANDOFF 역할
 
 - [[HANDOFF|루트 HANDOFF]]: 현재 상태, 다음 작업, 주의사항, 주요 링크만 담는 짧은 상태판
-- [[docs/HANDOFF|docs HANDOFF]]: 과거 상세 인수인계와 검증 결과를 보존하는 이력 문서
+- [[docs/archive-or-legacy/HANDOFF-history|과거 상세 HANDOFF]]: 과거 상세 인수인계와 검증 결과를 보존하는 보관 문서
 
 ---
 # 2. 운영 가이드(/guide)
@@ -67,13 +67,14 @@ Obsidian에서 상위 문서인 이 파일을 열었을 때 하위 문서로 바
   - [[docs/source/frontend-backend-contract|프론트엔드-백엔드 계약 원문]] : frontend-backend-contract
   - [[docs/source/db-schema|DB 스키마 원문]] : db-schema
   - [[docs/source/design-system|Lunit 디자인 참고 자료]] : design-system
+  - [[docs/source/routelog-design-system|RouteLog 모바일 디자인 시스템]] : routelog-design-system
 
 ---
 # 4. 기능 문서(/feature)
 
 - [[docs/feature/auth|인증]] : auth
 - [[docs/feature/running|러닝 기록]]  : running
-- [[docs/feature/route-feed|경로 피드]]  : froute-feed
+- [[docs/feature/route-feed|경로 피드]]  : route-feed
 - [[docs/feature/route-detail|경로 상세]]  : route-detail
 - [[docs/feature/profile|프로필]]  : profile
 
@@ -127,6 +128,11 @@ Task 문서는 `docs/task/` 아래에 유지한다.
 - [[docs/task/TASK-036-frontend-bookmark|TASK-036 프론트엔드 북마크]]
 - [[docs/task/TASK-037-frontend-common-states|TASK-037 프론트엔드 공통 상태]]
 - [[docs/task/TASK-038-frontend-integration-qa|TASK-038 프론트엔드 통합 QA]]
+- [[docs/task/TASK-039-db-document-consistency|TASK-039 DB 문서 정합성 감사]]
+- [[docs/task/TASK-040-llm-wiki-final-lint|TASK-040 LLM Wiki 최종 정합성 보정]]
+- [[docs/task/TASK-041-archive-detailed-handoff|TASK-041 상세 HANDOFF 보관]]
+- [[docs/task/TASK-042-relocate-my-note-record|TASK-042 My Note 기록 이동]]
+- [[docs/task/TASK-043-wiki-governance-hardening|TASK-043 Wiki 운영 정합성 보강]]
 
 ---
 # 6. 계획 / 설계 / 분석 / 보고 문서
@@ -184,7 +190,8 @@ graphify 및 코드/문서 분석 산출물은 `docs/graph/`에 보관한다.
 # 13. 보관 문서
 
 이전 legacy 문서 또는 중복된 색인 문서는 `docs/archive-or-legacy/`에 보관한다.
-보관 문서는 삭제하지 않고, 필요할 때도 참고하지 않는다.
+보관 문서는 삭제하지 않지만 현재 작업의 기본 판단 기준으로 사용하지 않는다.
+과거 결정 배경이나 검증 이력이 필요한 경우에만 참고하고, 현재 기준은 이 인덱스와 관련 guide/source 문서를 따른다.
 
 - [[docs/archive-or-legacy/00-LLM-ENTRY|이전 LLM 진입 문서]]
 - [[docs/archive-or-legacy/00-DOC-MAP|이전 문서 맵]]

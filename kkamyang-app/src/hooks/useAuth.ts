@@ -8,6 +8,7 @@ type AuthState = {
   session: Session | null;
   user: User | null;
   isLoading: boolean;
+  isSigningIn: boolean;
   errorMessage: string | null;
 };
 
@@ -15,6 +16,7 @@ const authState: AuthState = {
   session: null,
   user: null,
   isLoading: true,
+  isSigningIn: false,
   errorMessage: null,
 };
 
@@ -122,7 +124,11 @@ export function useAuth() {
   );
 
   const signInWithGoogle = useCallback(async () => {
-    setAuthState({ errorMessage: null });
+    if (authState.isSigningIn) {
+      return;
+    }
+
+    setAuthState({ errorMessage: null, isSigningIn: true });
 
     try {
       await authService.signInWithGoogle();
@@ -131,6 +137,8 @@ export function useAuth() {
         errorMessage:
           error instanceof Error ? error.message : "GOOGLE_LOGIN_ERROR",
       });
+    } finally {
+      setAuthState({ isSigningIn: false });
     }
   }, []);
 

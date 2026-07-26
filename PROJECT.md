@@ -2,14 +2,15 @@
 
 ## 현재 상태
 
-- 백엔드 MVP API와 프론트엔드 연동 작업이 진행 중이다.
-- 현재 우선순위는 프론트엔드 완성, 안정적인 백엔드 연동, 실기기 QA다.
+- 백엔드 MVP API 기준선과 프론트엔드 로컬 연동은 완료되었다.
+- 현재 우선순위는 환경 설정 후 Android 실기기에서 전체 흐름을 재검증하는 것이다.
+- 최신 진행 상태와 차단 사유는 [[HANDOFF]]와 [[docs/FRONTEND-BOARD]]를 따른다.
 - MVP 활동 타입은 `RUN`만 지원한다.
 
 ## 핵심 문서
 
 - [[AGENTS]]
-- [[docs/HANDOFF]]
+- [[HANDOFF]]
 - [[docs/architecture]]
 - [[docs/api-spec]]
 - [[docs/db-schema]]

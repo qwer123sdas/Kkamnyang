@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { RouteCard } from "../../components/route/RouteCard";
+import { AsyncStateMessage } from "../../components/common/AsyncStateMessage";
 import { useRouteFeed } from "../../hooks/useRouteFeed";
 import type { MainStackParamList } from "../../navigation/MainNavigator";
 import type { RouteFeedItem } from "../../types/route";
@@ -41,12 +42,18 @@ export default function RouteFeedScreen() {
       <Text>Route Feed Screen</Text>
       <Button onPress={() => navigation.navigate("Record")} title="Record" />
       <Button onPress={() => navigation.navigate("Profile")} title="Profile" />
-      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      {errorMessage ? (
+        <AsyncStateMessage message={errorMessage} onRetry={() => void refresh()} />
+      ) : null}
       <FlatList
         data={items}
         keyExtractor={(item) => String(item.route_id)}
         ListEmptyComponent={
-          isLoading ? <Text>Loading routes</Text> : <Text>No public routes</Text>
+          errorMessage ? null : isLoading ? (
+            <AsyncStateMessage message="Loading routes" />
+          ) : (
+            <AsyncStateMessage message="No public routes" />
+          )
         }
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}

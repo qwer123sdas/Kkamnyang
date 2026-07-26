@@ -1,6 +1,11 @@
-# RouteLog HANDOFF
+# RouteLog HANDOFF History
 
-## Current State - 2026-06-21
+> 보관 문서입니다. 현재 상태와 다음 작업은 루트 [[HANDOFF]]를 확인합니다.
+
+## Historical Snapshot - 2026-06-21
+
+이 절부터 `Completion Update - 2026-07-26` 이전까지는 과거 실행 및 인수인계 이력이다.
+현재 상태는 루트 [[HANDOFF]]와 문서 하단의 최신 날짜 섹션을 우선한다.
 
 ### Project Context
 
@@ -88,7 +93,7 @@ Checked in TASK-027 checklist:
 [x] app import stage has no crash
 ```
 
-Current server state at last check:
+Server state at that historical check:
 
 ```text
 Backend: 0.0.0.0:8000 LISTENING
@@ -97,7 +102,7 @@ PC IPv4 for Android test: 10.205.46.48
 Android health URL: http://10.205.46.48:8000/api/v1/health
 ```
 
-## Next Work
+## Historical Next Work
 
 ### Continue TASK-027 On Android Physical Device
 
@@ -165,7 +170,7 @@ After TASK-027 physical-device QA:
 
 ```text
 1. Modified docs:
-   - docs/HANDOFF.md
+   - docs/archive-or-legacy/HANDOFF-history.md
    - docs/task/TASK-026-frontend-backend-integration.md
    - docs/task/TASK-027-mobile-manual-qa-regression.md
 
@@ -212,3 +217,37 @@ docs/task/TASK-038-frontend-integration-qa.md
 - [[docs/task/TASK-036-frontend-bookmark]]
 - [[docs/task/TASK-037-frontend-common-states]]
 - [[docs/task/TASK-038-frontend-integration-qa]]
+
+## Current Work - 2026-07-26
+
+```text
+1. TASK-030 frontend common API types is completed.
+2. TypeScript verification passed with npx.cmd tsc --noEmit.
+3. TASK-031 through TASK-034 are ready.
+4. TASK-035 through TASK-038 are waiting.
+5. Remaining TASK-027 Android physical-device checks are not considered passed.
+6. The remaining physical-device checks must be rerun or recorded as blocked in TASK-038.
+```
+
+## Completion Update - 2026-07-26
+
+```text
+1. TASK-030 through TASK-037 are completed locally.
+2. TASK-038 is completed with external-environment blockers documented.
+3. TypeScript passed.
+4. Backend tests passed: 57 passed, 131 warnings.
+5. Required EXPO_PUBLIC_* process environment entries were NOT_SET; actual values were not read.
+6. Android physical-device OAuth, map, location permission, and end-to-end flow remain unverified.
+7. DB documents were audited without executing SQL or changing the schema in TASK-039.
+```
+
+## LLM Wiki Lint Update - 2026-07-26
+
+```text
+1. TASK-040 completed the final LLM Wiki consistency pass.
+2. Directory paths are written as code paths; Wikilinks target actual notes.
+3. The TASK template now points to docs/source documents.
+4. Feature guides contain all required sections.
+5. Task status values and the decisions path are standardized.
+6. TASK-007 remains extensionless under the preserve-existing-task-name policy.
+```

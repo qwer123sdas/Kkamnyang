@@ -53,7 +53,7 @@ Route 기능
 ```text
 AGENTS.md
 
-docs/architecture.md
+docs/source/architecture.md
 ```
 
 ---

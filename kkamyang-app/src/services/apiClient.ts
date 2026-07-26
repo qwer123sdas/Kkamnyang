@@ -1,6 +1,17 @@
 import { env } from "../config/env";
-import { API_BASE_PATH } from "../constants/api";
+import { API_BASE_PATH, type ApiErrorCode } from "../constants/api";
 import type { ApiResponse } from "../types/api";
+
+export class ApiClientError extends Error {
+  constructor(
+    message: string,
+    readonly errorCode: ApiErrorCode,
+    readonly status: number,
+  ) {
+    super(message);
+    this.name = "ApiClientError";
+  }
+}
 
 export const apiClient = {
   baseUrl: env.apiBaseUrl,
@@ -138,7 +149,11 @@ async function request<TData>({
 
   if (!result.success) {
     console.log("[API] response error", method, path, result.error_code, result.message);
-    throw new Error(result.message || result.error_code);
+    throw new ApiClientError(
+      result.message || result.error_code,
+      result.error_code,
+      response.status,
+    );
   }
 
   return result.data;

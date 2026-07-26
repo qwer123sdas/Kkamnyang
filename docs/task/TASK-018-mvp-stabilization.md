@@ -21,7 +21,7 @@
 ```text
 kkamyang-app/src/screens/route/RouteClusterScreen.tsx
 docs/task/TASK-018-mvp-stabilization.md
-docs/HANDOFF.md
+docs/archive-or-legacy/HANDOFF-history.md
 ```
 
 ### Commands
